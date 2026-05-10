@@ -1,0 +1,43 @@
+name: ielts_speaking_2026
+description: "IELTS Speaking 2026 — 200+ cue cards, Band 7-8 answers, offline practice."
+publish_to: 'none'
+version: 1.0.0+10
+
+environment:
+  sdk: '>=3.3.3 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.6
+
+  # ── Local storage (bookmarks, practiced, dark mode, premium) ─────────────────
+  shared_preferences: ^2.2.2
+
+  # ── Ads — free version only ───────────────────────────────────────────────────
+  google_mobile_ads: ^8.0.0
+
+  # ── In-app purchase — ₹199 lifetime ──────────────────────────────────────────
+  in_app_purchase: ^3.2.0
+
+  # ── AI Speaking Coach (Premium) ────────────────────────────────────────────────
+  speech_to_text: ^7.0.0       # Mic → text for AI practice
+  fl_chart: ^0.70.2            # Band score progress charts
+
+  # ── Utilities ─────────────────────────────────────────────────────────────────
+  url_launcher: ^6.3.0        # Open Play Store, email
+  share_plus: ^13.0.0         # Share app with friends
+  package_info_plus: ^10.0.0   # Real version number in About screen
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/data/cue_cards.json
+    - assets/images/
