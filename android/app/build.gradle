@@ -112,4 +112,5 @@ dependencies {
     implementation 'com.google.android.play:review:2.0.1'
     implementation 'com.google.android.play:feature-delivery:2.1.0'
     implementation 'com.facebook.android:audience-network-sdk:6.+'
+    implementation 'com.unity3d.ads:unity-ads:4.12.+'
 }
