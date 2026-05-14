@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../data/repositories/cue_card_repository.dart';
 import '../../data/repositories/prefs_repository.dart';
+import '../../data/services/update_service.dart';
 import '../../main.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -56,6 +57,7 @@ class _HomeScreenState extends State<HomeScreen>
             curve:
                 Interval(i * 0.12, (i * 0.12) + 0.5, curve: Curves.easeOut))));
     _loadAll();
+    UpdateService.checkForUpdate(); // Fire-and-forget: Play Store update check
   }
 
   @override

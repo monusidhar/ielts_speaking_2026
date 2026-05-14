@@ -1,7 +1,7 @@
 name: ielts_speaking_2026
 description: "IELTS Speaking 2026 — 200+ cue cards, Band 7-8 answers, offline practice."
 publish_to: 'none'
-version: 1.0.0+11
+version: 1.0.0+12
 
 environment:
   sdk: '>=3.3.3 <4.0.0'
@@ -26,6 +26,9 @@ dependencies:
   # ── AI Speaking Coach (Premium) ────────────────────────────────────────────────
   speech_to_text: ^7.0.0       # Mic → text for AI practice
   fl_chart: ^0.70.2            # Band score progress charts
+
+  # ── In-app update — Play Store update prompts ─────────────────────────────────
+  in_app_update: ^4.2.3       # Google Play in-app update API
 
   # ── Utilities ─────────────────────────────────────────────────────────────────
   url_launcher: ^6.3.0        # Open Play Store, email

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../../data/services/ai_service.dart';
 import '../../data/app_secrets.dart';
 
@@ -21,8 +22,6 @@ import '../../data/app_secrets.dart';
 // ─────────────────────────────────────────────────────────────────────────────
 
 // ── App constants ──────────────────────────────────────────────────────────────
-const String _appVersion = '1.0.0';
-const String _appBuild = '100';
 const String _developerName = 'Monu Sidhar';
 const String _contactEmail = AppSecrets.contactEmail;
 const String _playStoreUrl =
@@ -47,9 +46,14 @@ class _AboutScreenState extends State<AboutScreen>
   int _logoTaps = 0;
   int _versionTaps = 0;
 
+  // Dynamic version from package_info_plus
+  String _appVersion = '...';
+  String _appBuild = '...';
+
   @override
   void initState() {
     super.initState();
+    _loadVersion();
     _animCtrl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
@@ -67,6 +71,16 @@ class _AboutScreenState extends State<AboutScreen>
       );
     });
     _animCtrl.forward();
+  }
+
+  Future<void> _loadVersion() async {
+    final info = await PackageInfo.fromPlatform();
+    if (mounted) {
+      setState(() {
+        _appVersion = info.version;
+        _appBuild = info.buildNumber;
+      });
+    }
   }
 
   @override
