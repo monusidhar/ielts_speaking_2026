@@ -1,0 +1,54 @@
+Safe AI Features to Add
+1. AI Mock Interview (Part 1 / Part 3 Simulator) ⭐ High Impact
+
+You already have AI Practice for Part 2 (cue cards). Add a conversational interview mode for Parts 1 & 3.
+AI asks a question → user speaks → AI scores + asks a follow-up (3-5 turns).
+Reuses your existing AiService (Groq/Llama) + speech_to_text. Just a new screen + modified prompt.
+Premium feature.
+2. AI Pronunciation Highlights
+
+After AI practice, highlight mispronounced or weak words in the transcript (color-coded).
+You already get the transcript back — just add a small prompt tweak to AiService asking Groq to return flagged words, then render them differently in AiFeedbackScreen.
+Minimal change, high perceived value.
+3. AI-Generated Daily Practice Question
+
+Show a fresh AI-generated Part 1/3 question on the Home screen daily (cached in SharedPreferences).
+One small Groq API call per day. Free users get the question, premium users can practice with AI.
+Adds engagement + daily retention.
+------------------------------------------
+Safe Non-AI Features
+4. Streak / Daily Goal Tracker ⭐ Easy Win
+
+Track consecutive days of practice (store dates in PrefsRepository).
+Show a streak counter + flame icon on Home screen.
+No backend needed, pure SharedPreferences. Very safe to add.
+5. Part 1 Question Bank
+
+Your app only has Part 2 cue cards. Add a Part 1 common questions JSON file (e.g., 150 questions grouped by topic: Work, Study, Hometown, etc.).
+New screen, new JSON asset. Zero risk to existing features.
+6. Idiom / Collocation of the Day
+
+Small card on Home screen showing one idiom + meaning + example sentence daily.
+Data from a new JSON file. Rotates daily based on date.
+Free feature, increases daily opens.
+7. Band Score Estimator Widget
+
+Users have practice history data. Show a "Your Estimated Band" card on Home based on their last 5 AI sessions' average.
+Pure read from PracticeHistoryRepository. No writes, no risk.
+8. Export / Share Practice Report
+
+After AI feedback, add a "Share my score" button that generates a shareable image/text summary.
+You already have share_plus in pubspec. Just format the feedback data into a string.
+What I'd Prioritize (effort vs impact)
+#	Feature	Effort	Impact	Risk
+4	Streak tracker	Low	High	None
+1	AI Mock Interview (Part 1/3)	Medium	Very High	None
+5	Part 1 Question Bank	Low	High	None
+7	Band Score Estimator	Low	Medium	None
+8	Share Practice Report	Low	Medium	None
+2	Pronunciation Highlights	Low	Medium	Minimal
+3	Daily AI Question	Low	Medium	Minimal
+6	Idiom of the Day	Low	Low-Med	None
+All of these are new files only — new screens, new JSON assets, new service methods — so they won't touch your existing working code.
+
+Want me to start building any of these?

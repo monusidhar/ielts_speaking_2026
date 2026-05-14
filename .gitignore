@@ -39,6 +39,8 @@ lib/data/app_secrets.dart
 .pub/
 /build/
 pubspec.lock
+Feature-suggestions.txt
+APP_CONTEXT.md
 
 # Symbolication related
 app.*.symbols
