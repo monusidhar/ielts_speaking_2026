@@ -18,6 +18,16 @@ class PrefsRepository {
   static const _kAiDailyCount = 'ai_daily_count'; // int
   static const _kAiDailyDate = 'ai_daily_date'; // String (yyyy-MM-dd)
 
+  // ── Mock Interview keys ────────────────────────────────────────────────
+  static const _kMockFreeUsed = 'mock_free_completed'; // bool
+  static const _kMockDailyCount = 'mock_daily_count'; // int
+  static const _kMockDailyDate = 'mock_daily_date'; // String (yyyy-MM-dd)
+
+  // ── Daily AI Question keys ─────────────────────────────────────────────
+  static const _kDailyQuestionText = 'daily_question_text'; // String
+  static const _kDailyQuestionPart = 'daily_question_part'; // String (Part 1/3)
+  static const _kDailyQuestionDate = 'daily_question_date'; // String (yyyy-MM-dd)
+
   // ── Singleton ──────────────────────────────────────────────────────────────
   static SharedPreferences? _prefs;
 
@@ -187,5 +197,77 @@ class PrefsRepository {
       final count = _p.getInt(_kAiDailyCount) ?? 0;
       await _p.setInt(_kAiDailyCount, count + 1);
     }
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // MOCK INTERVIEW LIMITS
+  // Free: 1 lifetime trial  •  Premium: 5/day
+  // ─────────────────────────────────────────────────────────────────────────
+
+  static const int mockDailyLimitPremium = 5;
+
+  /// Whether the free user has already used their 1 lifetime mock interview
+  static bool hasMockFreeBeenUsed() => _p.getBool(_kMockFreeUsed) ?? false;
+
+  /// Whether user can start another mock interview
+  static bool canDoMockInterview() {
+    if (isPremium()) return getMockDailyCount() < mockDailyLimitPremium;
+    return !hasMockFreeBeenUsed();
+  }
+
+  /// How many mock interviews done today (premium only counter)
+  static int getMockDailyCount() {
+    final savedDate = _p.getString(_kMockDailyDate) ?? '';
+    if (savedDate != _todayStr()) return 0;
+    return _p.getInt(_kMockDailyCount) ?? 0;
+  }
+
+  /// Remaining mock interviews
+  static int getMockRemaining() {
+    if (isPremium()) {
+      return (mockDailyLimitPremium - getMockDailyCount())
+          .clamp(0, mockDailyLimitPremium);
+    }
+    return hasMockFreeBeenUsed() ? 0 : 1;
+  }
+
+  /// Call after a mock interview completes
+  static Future<void> incrementMockCount() async {
+    if (!isPremium()) {
+      await _p.setBool(_kMockFreeUsed, true);
+      return;
+    }
+    final today = _todayStr();
+    final savedDate = _p.getString(_kMockDailyDate) ?? '';
+    if (savedDate != today) {
+      await _p.setString(_kMockDailyDate, today);
+      await _p.setInt(_kMockDailyCount, 1);
+    } else {
+      final count = _p.getInt(_kMockDailyCount) ?? 0;
+      await _p.setInt(_kMockDailyCount, count + 1);
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // DAILY AI QUESTION (cached, one API call/day)
+  // ─────────────────────────────────────────────────────────────────────────
+
+  /// Get cached daily question (null if none for today)
+  static String? getDailyQuestion() {
+    final savedDate = _p.getString(_kDailyQuestionDate) ?? '';
+    if (savedDate != _todayStr()) return null;
+    return _p.getString(_kDailyQuestionText);
+  }
+
+  /// Get the part type (e.g. "Part 1" or "Part 3")
+  static String getDailyQuestionPart() {
+    return _p.getString(_kDailyQuestionPart) ?? 'Part 1';
+  }
+
+  /// Save today's daily question
+  static Future<void> saveDailyQuestion(String question, String part) async {
+    await _p.setString(_kDailyQuestionDate, _todayStr());
+    await _p.setString(_kDailyQuestionText, question);
+    await _p.setString(_kDailyQuestionPart, part);
   }
 }

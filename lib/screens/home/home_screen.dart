@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../data/repositories/cue_card_repository.dart';
 import '../../data/repositories/prefs_repository.dart';
+import '../../data/services/ai_service.dart';
 import '../../data/services/update_service.dart';
 import '../../main.dart';
 
@@ -34,6 +35,11 @@ class _HomeScreenState extends State<HomeScreen>
   int _bookmarked = 0;
   bool _isLoading = true;
 
+  // ── Daily AI Question ─────────────────────────────────────────────────
+  String? _dailyQuestion;
+  String _dailyQuestionPart = 'Part 1';
+  bool _dailyQuestionLoading = false;
+
   final List<String> _tips = [
     'Use a variety of tenses — past, present perfect, and conditional — to show grammatical range.',
     'Open with a strong topic sentence and end with a personal opinion or reflection.',
@@ -51,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen>
     _animCtrl = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 800));
     _fadeAnims = List.generate(
-        5,
+        6,
         (i) => Tween<double>(begin: 0, end: 1).animate(CurvedAnimation(
             parent: _animCtrl,
             curve:
@@ -97,6 +103,41 @@ class _HomeScreenState extends State<HomeScreen>
     } catch (_) {
       if (mounted) setState(() => _isLoading = false);
     }
+    _loadDailyQuestion();
+  }
+
+  /// Load daily AI question (from cache or API)
+  Future<void> _loadDailyQuestion() async {
+    // Check cache first
+    final cached = PrefsRepository.getDailyQuestion();
+    if (cached != null) {
+      if (mounted) {
+        setState(() {
+          _dailyQuestion = cached;
+          _dailyQuestionPart = PrefsRepository.getDailyQuestionPart();
+        });
+      }
+      return;
+    }
+
+    // Fetch from AI
+    if (!AiService.isConfigured) return;
+    if (mounted) setState(() => _dailyQuestionLoading = true);
+
+    try {
+      final result = await AiService.generateDailyQuestion();
+      await PrefsRepository.saveDailyQuestion(
+          result['question']!, result['part']!);
+      if (mounted) {
+        setState(() {
+          _dailyQuestion = result['question'];
+          _dailyQuestionPart = result['part']!;
+          _dailyQuestionLoading = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) setState(() => _dailyQuestionLoading = false);
+    }
   }
 
   // ── Fast refresh: SharedPreferences only (no JSON re-load needed) ─────────
@@ -134,7 +175,10 @@ class _HomeScreenState extends State<HomeScreen>
                     anim: _fadeAnims[2], child: _buildExploreGrid(isDark))),
             SliverToBoxAdapter(
                 child: _FadeSection(
-                    anim: _fadeAnims[3], child: _buildDailyTip(isDark))),
+                    anim: _fadeAnims[3], child: _buildDailyQuestion(isDark))),
+            SliverToBoxAdapter(
+                child: _FadeSection(
+                    anim: _fadeAnims[4], child: _buildDailyTip(isDark))),
             const SliverToBoxAdapter(child: SizedBox(height: 32)),
           ],
         ),
@@ -290,6 +334,78 @@ class _HomeScreenState extends State<HomeScreen>
           )),
         ]),
         const SizedBox(height: 12),
+        // ── Full Mock Interview ───────────────────────────────────────
+        GestureDetector(
+          onTap: () {
+            Navigator.pushNamed(context, '/mock-interview-intro');
+          },
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF6A1B9A), Color(0xFF8E24AA)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF6A1B9A).withOpacity(0.3),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                )
+              ],
+            ),
+            child: Row(children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(Icons.record_voice_over_rounded,
+                    color: Colors.white, size: 24),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                    Row(children: [
+                      const Text('Full Mock Interview',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold)),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.25),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Text('NEW',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold)),
+                      ),
+                    ]),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Part 1 + Part 2 + Part 3 • AI Band Score',
+                      style: TextStyle(
+                          color: Colors.white.withOpacity(0.8), fontSize: 12),
+                    ),
+                  ])),
+              Icon(Icons.arrow_forward_ios_rounded,
+                  color: Colors.white.withOpacity(0.7), size: 16),
+            ]),
+          ),
+        ),
+        const SizedBox(height: 12),
         // ── AI Speaking Coach ─────────────────────────────────────────────
         GestureDetector(
           onTap: () {
@@ -428,6 +544,165 @@ class _HomeScreenState extends State<HomeScreen>
           ],
         ),
       ]),
+    );
+  }
+
+  Widget _buildDailyQuestion(bool isDark) {
+    // Don't show if no question loaded yet and not loading
+    if (_dailyQuestion == null && !_dailyQuestionLoading) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+      child: Container(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: isDark
+                ? [const Color(0xFF1A3050), const Color(0xFF1A2E4A)]
+                : [const Color(0xFFE3F2FD), const Color(0xFFBBDEFB)],
+          ),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: isDark
+                ? const Color(0xFF4DB6FF).withOpacity(0.2)
+                : const Color(0xFF1565C0).withOpacity(0.15),
+          ),
+        ),
+        child: _dailyQuestionLoading
+            ? Row(children: [
+                SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: isDark
+                        ? const Color(0xFF4DB6FF)
+                        : const Color(0xFF1565C0),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text('Generating today\'s question...',
+                    style: TextStyle(
+                        fontSize: 13,
+                        color: isDark
+                            ? const Color(0xFF8899AA)
+                            : const Color(0xFF555577))),
+              ])
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? const Color(0xFF4DB6FF).withOpacity(0.15)
+                            : const Color(0xFF1565C0).withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(Icons.psychology_rounded,
+                          color: isDark
+                              ? const Color(0xFF4DB6FF)
+                              : const Color(0xFF1565C0),
+                          size: 22),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Daily AI Question',
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  color: isDark
+                                      ? const Color(0xFF4DB6FF)
+                                      : const Color(0xFF1565C0),
+                                  letterSpacing: 0.5)),
+                          const SizedBox(height: 2),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 1),
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? const Color(0xFF4DB6FF).withOpacity(0.1)
+                                  : const Color(0xFF1565C0).withOpacity(0.08),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(_dailyQuestionPart,
+                                style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w600,
+                                    color: isDark
+                                        ? const Color(0xFF4DB6FF)
+                                        : const Color(0xFF1565C0))),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ]),
+                  const SizedBox(height: 14),
+                  Text(
+                    _dailyQuestion ?? '',
+                    style: TextStyle(
+                      fontSize: 15,
+                      height: 1.5,
+                      fontWeight: FontWeight.w500,
+                      color: isDark
+                          ? const Color(0xFFE8EAF0)
+                          : const Color(0xFF1A1A2E),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  GestureDetector(
+                    onTap: () {
+                      if (PrefsRepository.isPremium() ||
+                          PrefsRepository.canUseAi()) {
+                        Navigator.pushNamed(
+                          context,
+                          '/daily-question-practice',
+                          arguments: {
+                            'question': _dailyQuestion!,
+                            'partType': _dailyQuestionPart,
+                          },
+                        );
+                      } else {
+                        Navigator.pushNamed(context, '/premium');
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? const Color(0xFF4DB6FF)
+                            : const Color(0xFF1565C0),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(mainAxisSize: MainAxisSize.min, children: [
+                        const Icon(Icons.mic_rounded,
+                            color: Colors.white, size: 16),
+                        const SizedBox(width: 6),
+                        Text(
+                          PrefsRepository.isPremium()
+                              ? 'Practice with AI'
+                              : 'Practice with AI (Free)',
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      ]),
+                    ),
+                  ),
+                ],
+              ),
+      ),
     );
   }
 

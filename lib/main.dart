@@ -20,6 +20,11 @@ import 'screens/about/about_screen.dart';
 import 'screens/practice/ai_practice_screen.dart';
 import 'screens/practice/ai_feedback_screen.dart';
 import 'screens/practice/practice_history_screen.dart';
+import 'screens/mock_interview/mock_interview_intro_screen.dart';
+import 'screens/mock_interview/mock_interview_screen.dart';
+import 'screens/mock_interview/mock_interview_result_screen.dart';
+import 'screens/daily_question/daily_question_practice_screen.dart';
+import 'data/models/mock_interview_models.dart';
 import 'data/repositories/practice_history_repository.dart';
 import 'data/repositories/cue_card_repository.dart';
 import 'data/services/ai_service.dart';
@@ -335,6 +340,8 @@ class _IELTSSpeakingAppState extends State<IELTSSpeakingApp> {
         AppRoutes.about: (ctx) => const AboutScreen(),
         AppRoutes.aiPractice: (ctx) => const AiPracticeScreen(),
         AppRoutes.practiceHistory: (ctx) => const PracticeHistoryScreen(),
+        AppRoutes.mockInterviewIntro: (ctx) => const MockInterviewIntroScreen(),
+        AppRoutes.mockInterview: (ctx) => const MockInterviewScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == AppRoutes.cueCardDetail) {
@@ -352,6 +359,24 @@ class _IELTSSpeakingAppState extends State<IELTSSpeakingApp> {
               feedback: args['feedback'] as AiFeedback,
               card: args['card'] as CueCard,
               transcript: args['transcript'] as String,
+            ),
+          );
+        }
+        if (settings.name == AppRoutes.mockInterviewResult) {
+          final args = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(
+            builder: (ctx) => MockInterviewResultScreen(
+              result: args['result'] as MockInterviewResult,
+              card: args['card'] as CueCard,
+            ),
+          );
+        }
+        if (settings.name == AppRoutes.dailyQuestionPractice) {
+          final args = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(
+            builder: (ctx) => DailyQuestionPracticeScreen(
+              question: args['question'] as String,
+              partType: args['partType'] as String,
             ),
           );
         }
@@ -379,6 +404,10 @@ class AppRoutes {
   static const String aiPractice = '/ai-practice';
   static const String aiFeedback = '/ai-feedback';
   static const String practiceHistory = '/practice-history';
+  static const String mockInterviewIntro = '/mock-interview-intro';
+  static const String mockInterview = '/mock-interview';
+  static const String mockInterviewResult = '/mock-interview-result';
+  static const String dailyQuestionPractice = '/daily-question-practice';
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

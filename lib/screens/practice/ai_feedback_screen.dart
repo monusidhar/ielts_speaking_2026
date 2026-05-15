@@ -190,7 +190,7 @@ class _AiFeedbackScreenState extends State<AiFeedbackScreen>
                                     : const Color(0xFF333355))))),
                 const SizedBox(height: 16),
 
-                // ── Your Transcript ──────────────────────────────────────────
+                // ── Your Transcript (with pronunciation highlights) ────────
                 _FadeIn(
                     anim: _fadeAnims[6],
                     child: _buildSection(
@@ -200,17 +200,107 @@ class _AiFeedbackScreenState extends State<AiFeedbackScreen>
                         isDark
                             ? const Color(0xFF4DB6FF)
                             : const Color(0xFF1565C0),
-                        child: Text(widget.transcript,
-                            style: TextStyle(
-                                fontSize: 13.5,
-                                height: 1.6,
-                                color: isDark
-                                    ? const Color(0xFF8899AA)
-                                    : const Color(0xFF555577))))),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildHighlightedTranscript(isDark, f),
+                            if (f.pronunciationFlags.isNotEmpty) ...[
+                              const SizedBox(height: 12),
+                              Row(children: [
+                                Container(
+                                  width: 12,
+                                  height: 12,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFE65100)
+                                        .withOpacity(0.15),
+                                    borderRadius: BorderRadius.circular(3),
+                                    border: Border.all(
+                                        color: const Color(0xFFE65100)
+                                            .withOpacity(0.5)),
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  'Highlighted words may need pronunciation practice',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontStyle: FontStyle.italic,
+                                    color: isDark
+                                        ? const Color(0xFF557799)
+                                        : const Color(0xFF999999),
+                                  ),
+                                ),
+                              ]),
+                            ],
+                          ],
+                        ))),
               ]),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildHighlightedTranscript(bool isDark, AiFeedback f) {
+    final transcript = widget.transcript;
+    if (f.pronunciationFlags.isEmpty) {
+      return Text(transcript,
+          style: TextStyle(
+              fontSize: 13.5,
+              height: 1.6,
+              color: isDark
+                  ? const Color(0xFF8899AA)
+                  : const Color(0xFF555577)));
+    }
+
+    // Build a set of lowercase flagged words for matching
+    final flaggedWords =
+        f.pronunciationFlags.map((w) => w.toLowerCase()).toSet();
+
+    // Split transcript into words while preserving whitespace/punctuation
+    final pattern = RegExp(r"(\b\w+\b)");
+    final spans = <TextSpan>[];
+    int lastEnd = 0;
+
+    for (final match in pattern.allMatches(transcript)) {
+      // Add text before this word (spaces, punctuation)
+      if (match.start > lastEnd) {
+        spans.add(TextSpan(text: transcript.substring(lastEnd, match.start)));
+      }
+
+      final word = match.group(0)!;
+      final isHighlighted = flaggedWords.contains(word.toLowerCase());
+
+      if (isHighlighted) {
+        spans.add(TextSpan(
+          text: word,
+          style: TextStyle(
+            backgroundColor:
+                const Color(0xFFE65100).withOpacity(isDark ? 0.2 : 0.12),
+            color: isDark ? const Color(0xFFFF8A65) : const Color(0xFFE65100),
+            fontWeight: FontWeight.w600,
+          ),
+        ));
+      } else {
+        spans.add(TextSpan(text: word));
+      }
+      lastEnd = match.end;
+    }
+
+    // Add any trailing text
+    if (lastEnd < transcript.length) {
+      spans.add(TextSpan(text: transcript.substring(lastEnd)));
+    }
+
+    return RichText(
+      text: TextSpan(
+        style: TextStyle(
+          fontSize: 13.5,
+          height: 1.6,
+          color: isDark ? const Color(0xFF8899AA) : const Color(0xFF555577),
+        ),
+        children: spans,
       ),
     );
   }

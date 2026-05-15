@@ -23,6 +23,7 @@ class AiFeedback {
   final List<String> improvements;
   final List<String> suggestedVocabulary;
   final String improvedAnswer;
+  final List<String> pronunciationFlags; // weak/mispronounced words
 
   const AiFeedback({
     required this.overallBand,
@@ -35,6 +36,7 @@ class AiFeedback {
     required this.improvements,
     required this.suggestedVocabulary,
     required this.improvedAnswer,
+    this.pronunciationFlags = const [],
   });
 
   factory AiFeedback.fromJson(Map<String, dynamic> json) {
@@ -56,6 +58,8 @@ class AiFeedback {
       suggestedVocabulary:
           List<String>.from(json['suggested_vocabulary'] ?? []),
       improvedAnswer: json['improved_answer'] as String? ?? '',
+      pronunciationFlags:
+          List<String>.from(json['pronunciation_flags'] ?? []),
     );
   }
 
@@ -70,6 +74,7 @@ class AiFeedback {
         'improvements': improvements,
         'suggested_vocabulary': suggestedVocabulary,
         'improved_answer': improvedAnswer,
+        'pronunciation_flags': pronunciationFlags,
       };
 }
 
@@ -124,8 +129,11 @@ Return a JSON object with exactly this structure:
   "strengths": ["<strength 1>", "<strength 2>", "<strength 3>"],
   "improvements": ["<improvement 1>", "<improvement 2>", "<improvement 3>"],
   "suggested_vocabulary": ["<word/phrase: meaning — e.g. Breathtaking: extremely impressive>", "<word/phrase: meaning>", "<word/phrase: meaning>", "<word/phrase: meaning>"],
-  "improved_answer": "<A concise improved version of the candidate's answer in 80-120 words, keeping their ideas but upgrading vocabulary and grammar>"
+  "improved_answer": "<A concise improved version of the candidate's answer in 80-120 words, keeping their ideas but upgrading vocabulary and grammar>",
+  "pronunciation_flags": ["<word1>", "<word2>", "<word3>"]
 }
+
+For "pronunciation_flags": identify 3-8 words from the candidate's transcript that are commonly mispronounced by non-native speakers, have unusual spelling-to-sound patterns, or appear to be incorrectly used (suggesting the speaker may not know how to pronounce them). Only include words that actually appear in the transcript. Return them in lowercase.
 
 Return ONLY the raw JSON object. No markdown, no code fences, no extra text.
 ''';
@@ -188,6 +196,181 @@ Return ONLY the raw JSON object. No markdown, no code fences, no extra text.
     } catch (e) {
       debugPrint('AI evaluation error: $e');
       rethrow;
+    }
+  }
+
+  /// Evaluate a Part 1 or Part 3 spoken answer (no cue card)
+  static Future<AiFeedback> evaluateDailyAnswer({
+    required String question,
+    required String partType,
+    required String userTranscript,
+    required int speakingDurationSecs,
+  }) async {
+    final isP1 = partType == 'Part 1';
+    final promptText = '''
+You are an experienced IELTS Speaking examiner. Evaluate the following IELTS Speaking $partType response.
+
+**Question:** $question
+
+**Candidate's Response (transcribed from speech, ${speakingDurationSecs}s):**
+"$userTranscript"
+
+Evaluate the candidate's response based on the four IELTS Speaking criteria. Since this is a speech-to-text transcription, be slightly lenient with punctuation/formatting but assess the content quality, vocabulary range, grammar accuracy, and coherence.
+
+For $partType:
+${isP1 ? '- Answers should be 2-4 sentences, natural and personal.\n- Penalize overly short (1-2 word) or overly long rambling answers.' : '- Answers should be analytical, well-structured, with examples.\n- Assess depth of reasoning and ability to discuss abstract topics.'}
+
+If the response is very short (under 10 words), too off-topic, or mostly incoherent, give appropriately low scores.
+
+Return a JSON object with exactly this structure:
+{
+  "overall_band": <number 0-9 in 0.5 increments>,
+  "fluency_and_coherence": <number 0-9 in 0.5 increments>,
+  "lexical_resource": <number 0-9 in 0.5 increments>,
+  "grammatical_range": <number 0-9 in 0.5 increments>,
+  "pronunciation": <number 0-9 in 0.5 increments>,
+  "overall_comment": "<2-3 sentence overall assessment>",
+  "strengths": ["<strength 1>", "<strength 2>"],
+  "improvements": ["<improvement 1>", "<improvement 2>"],
+  "suggested_vocabulary": ["<word/phrase: meaning>", "<word/phrase: meaning>", "<word/phrase: meaning>"],
+  "improved_answer": "<A concise improved version of the candidate's answer in ${isP1 ? '20-40' : '40-80'} words, keeping their ideas but upgrading vocabulary and grammar>",
+  "pronunciation_flags": ["<word1>", "<word2>", "<word3>"]
+}
+
+For "pronunciation_flags": identify 2-5 words from the candidate's transcript that are commonly mispronounced by non-native speakers. Only include words actually in the transcript. Return lowercase.
+
+Return ONLY the raw JSON object. No markdown, no code fences, no extra text.
+''';
+
+    try {
+      final client = HttpClient();
+      client.connectionTimeout = const Duration(seconds: 30);
+
+      final request = await client.postUrl(Uri.parse(_baseUrl));
+      request.headers.set('Authorization', 'Bearer $_apiKey');
+      request.headers.set('Content-Type', 'application/json');
+
+      final body = json.encode({
+        'model': _model,
+        'messages': [
+          {'role': 'user', 'content': promptText},
+        ],
+        'temperature': 0.4,
+        'max_tokens': 1536,
+        'response_format': {'type': 'json_object'},
+      });
+      request.add(utf8.encode(body));
+
+      final response = await request.close();
+      final responseBody = await response.transform(utf8.decoder).join();
+      await _trackApiCall(response.statusCode);
+
+      if (response.statusCode == 429) {
+        throw Exception(
+            'AI server is busy right now. Please try again in a minute.');
+      }
+      if (response.statusCode != 200) {
+        final errorData = json.decode(responseBody) as Map<String, dynamic>;
+        final errorMsg = errorData['error']?['message'] ?? 'Unknown error';
+        throw Exception('Groq API error (${response.statusCode}): $errorMsg');
+      }
+
+      final data = json.decode(responseBody) as Map<String, dynamic>;
+      final text =
+          data['choices']?[0]?['message']?['content']?.toString().trim() ?? '';
+
+      if (text.isEmpty) throw Exception('Empty response from AI');
+
+      String jsonStr = text;
+      if (jsonStr.contains('```')) {
+        final match =
+            RegExp(r'```(?:json)?\s*([\s\S]*?)```').firstMatch(jsonStr);
+        if (match != null) jsonStr = match.group(1)!.trim();
+      }
+
+      final parsed = json.decode(jsonStr) as Map<String, dynamic>;
+      client.close();
+      return AiFeedback.fromJson(parsed);
+    } catch (e) {
+      debugPrint('Daily answer evaluation error: $e');
+      rethrow;
+    }
+  }
+
+  /// Generate a daily AI practice question (Part 1 or Part 3)
+  /// Returns a map with 'question' and 'part' keys.
+  static Future<Map<String, String>> generateDailyQuestion() async {
+    final dayOfYear = DateTime.now().difference(DateTime(2026)).inDays;
+    final promptText = '''
+You are an IELTS Speaking examiner. Generate ONE fresh, original IELTS Speaking practice question.
+
+Today's seed number: $dayOfYear (use this to vary the topic).
+
+Randomly choose either Part 1 or Part 3. 
+- Part 1 questions are simple personal questions (e.g., about hobbies, hometown, daily routine).
+- Part 3 questions are abstract/analytical (e.g., about society, technology, education trends).
+
+Return a JSON object with exactly this structure:
+{
+  "part": "Part 1" or "Part 3",
+  "question": "<the question text>"
+}
+
+Return ONLY the raw JSON object. No markdown, no code fences, no extra text.
+''';
+
+    try {
+      final client = HttpClient();
+      client.connectionTimeout = const Duration(seconds: 15);
+
+      final request = await client.postUrl(Uri.parse(_baseUrl));
+      request.headers.set('Authorization', 'Bearer $_apiKey');
+      request.headers.set('Content-Type', 'application/json');
+
+      final body = json.encode({
+        'model': _model,
+        'messages': [
+          {'role': 'user', 'content': promptText},
+        ],
+        'temperature': 0.9,
+        'max_tokens': 256,
+        'response_format': {'type': 'json_object'},
+      });
+      request.add(utf8.encode(body));
+
+      final response = await request.close();
+      final responseBody = await response.transform(utf8.decoder).join();
+      await _trackApiCall(response.statusCode);
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to generate daily question');
+      }
+
+      final data = json.decode(responseBody) as Map<String, dynamic>;
+      final text =
+          data['choices']?[0]?['message']?['content']?.toString().trim() ?? '';
+
+      String jsonStr = text;
+      if (jsonStr.contains('```')) {
+        final match =
+            RegExp(r'```(?:json)?\s*([\s\S]*?)```').firstMatch(jsonStr);
+        if (match != null) jsonStr = match.group(1)!.trim();
+      }
+
+      final parsed = json.decode(jsonStr) as Map<String, dynamic>;
+      client.close();
+
+      return {
+        'question': parsed['question'] as String? ?? 'What do you enjoy doing in your free time?',
+        'part': parsed['part'] as String? ?? 'Part 1',
+      };
+    } catch (e) {
+      debugPrint('Daily question generation error: $e');
+      // Fallback question if API fails
+      return {
+        'question': 'What do you enjoy doing in your free time?',
+        'part': 'Part 1',
+      };
     }
   }
 

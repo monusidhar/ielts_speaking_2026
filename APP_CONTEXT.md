@@ -1,7 +1,7 @@
 # IELTS Speaking 2026 — Full App Context
 
 > **Use this file** to give any AI assistant full context about this project.
-> Last updated: 14 May 2026
+> Last updated: 15 May 2026
 
 ---
 
@@ -32,13 +32,16 @@ lib/
 ├── data/
 │   ├── app_secrets.dart               # API keys (gitignored)
 │   ├── app_secrets.dart.example       # Template for secrets
+│   ├── models/
+│   │   └── mock_interview_models.dart # MockInterviewQuestions, MockQATranscript, MockInterviewResult
 │   ├── repositories/
 │   │   ├── prefs_repository.dart      # SharedPreferences wrapper
 │   │   ├── cue_card_repository.dart   # Loads/serves cue card data
 │   │   └── practice_history_repository.dart  # AI practice session history
 │   └── services/
 │       ├── ad_service.dart            # AdMob banner/interstitial/rewarded
-│       ├── ai_service.dart            # Groq API for AI feedback
+│       ├── ai_service.dart            # Groq API for AI feedback (cue card practice)
+│       ├── mock_interview_service.dart # Groq API for mock interview (question gen + evaluation)
 │       ├── billing_service.dart       # Google Play in-app purchase
 │       └── update_service.dart        # Remote forced-update check
 ├── screens/
@@ -51,9 +54,13 @@ lib/
 │   ├── bookmarks/bookmark_screen.dart # Bookmarked cards list
 │   ├── vocabulary/vocabulary_screen.dart # Paginated vocabulary browser
 │   ├── practice/
-│   │   ├── ai_practice_screen.dart    # Speech-to-text → AI evaluation (premium)
+│   │   ├── ai_practice_screen.dart    # Speech-to-text → AI evaluation (cue card)
 │   │   ├── ai_feedback_screen.dart    # Band score breakdown + feedback
 │   │   └── practice_history_screen.dart # Band progress chart + session list
+│   ├── mock_interview/
+│   │   ├── mock_interview_intro_screen.dart  # Format explainer + credit check
+│   │   ├── mock_interview_screen.dart       # Full interview flow (Part 1→2→3)
+│   │   └── mock_interview_result_screen.dart # Band scores + per-part feedback + premium upsell
 │   ├── premium/premium_screen.dart    # Purchase/restore premium
 │   ├── privacy/privacy_screen.dart    # Privacy policy
 │   └── about/about_screen.dart        # Version, contact, Play Store link
@@ -84,8 +91,11 @@ assets/
 | `AppRoutes.aiPractice` | `/ai-practice` | `AiPracticeScreen` | — |
 | `AppRoutes.aiFeedback` | `/ai-feedback` | `AiFeedbackScreen` | `{'feedback': AiFeedback, 'card': CueCard, 'transcript': String}` |
 | `AppRoutes.practiceHistory` | `/practice-history` | `PracticeHistoryScreen` | — |
+| `AppRoutes.mockInterviewIntro` | `/mock-interview-intro` | `MockInterviewIntroScreen` | — |
+| `AppRoutes.mockInterview` | `/mock-interview` | `MockInterviewScreen` | — |
+| `AppRoutes.mockInterviewResult` | `/mock-interview-result` | `MockInterviewResultScreen` | `{'result': MockInterviewResult, 'card': CueCard}` |
 
-Routes are defined in `main.dart`. Simple routes use `routes:` map; `cueCardDetail` and `aiFeedback` use `onGenerateRoute`.
+Routes are defined in `main.dart`. Simple routes use `routes:` map; `cueCardDetail`, `aiFeedback`, and `mockInterviewResult` use `onGenerateRoute`.
 
 ---
 
@@ -147,6 +157,40 @@ class AiFeedback {
 }
 ```
 
+### MockInterviewQuestions (`mock_interview_models.dart`)
+```dart
+class MockInterviewQuestions {
+  List<MockPart1Topic> part1Topics;  // 2 topics × 3 questions
+  List<String> part3Questions;       // 4 discussion questions
+}
+
+class MockPart1Topic {
+  String topic;
+  List<String> questions;
+}
+```
+
+### MockQATranscript (`mock_interview_models.dart`)
+```dart
+class MockQATranscript {
+  String question;
+  String transcript;
+  int durationSecs;
+}
+```
+
+### MockInterviewResult (`mock_interview_models.dart`)
+```dart
+class MockInterviewResult {
+  double overallBand;
+  double fluencyBand, lexicalBand, grammarBand, pronunciationBand;
+  double part1Band, part2Band, part3Band;
+  String overallComment, part1Feedback, part2Feedback, part3Feedback;
+  List<String> strengths, improvements, suggestedVocabulary;
+  String improvedPart2Answer;
+}
+```
+
 ---
 
 ## 5. JSON Data Format (`assets/data/cue_cards.json`)
@@ -189,9 +233,12 @@ class AiFeedback {
 | `practiced_total_count` | `int` | Total practice count (all sessions) |
 | `is_premium` | `bool` | Premium purchase status |
 | `is_dark_mode` | `bool` | Dark mode toggle |
-| `ai_daily_count` | `int` | AI practice uses today |
+| `ai_daily_count` | `int` | AI cue card practice uses today |
 | `ai_daily_date` | `String` | Date of last AI count reset |
 | `ai_practice_history` | `String` (JSON) | Serialised list of `PracticeSession` |
+| `mock_free_completed` | `bool` | Whether free user has used their 1 lifetime mock trial |
+| `mock_daily_count` | `int` | Mock interviews done today (premium counter) |
+| `mock_daily_date` | `String` | Date of last mock count reset |
 
 ---
 
@@ -202,7 +249,8 @@ class AiFeedback {
 | Cue cards | First 50 (`id <= 50`) | All cards |
 | Vocabulary | From first 50 cards only | All vocabulary |
 | Random practice | Random from first 50 | Random from all |
-| AI Speaking Coach | 5 uses/day | 15 uses/day |
+| AI Speaking Coach (cue card) | 5 uses/day | 15 uses/day |
+| **Full Mock Interview** | **1 lifetime trial** | **5/day** |
 | Ads | Banner + interstitial + rewarded | No ads |
 | Bookmarks | Unlimited | Unlimited |
 | Practice history | Available | Available |
@@ -225,16 +273,24 @@ All ads auto-hidden when `isPremium == true`. Uses `google_mobile_ads` + `gma_me
 
 ---
 
-## 9. AI Service (`ai_service.dart`)
+## 9. AI Services
 
+### AiService (`ai_service.dart`) — Cue Card Practice
 - **API:** Groq (`https://api.groq.com/openai/v1/chat/completions`)
 - **Model:** Llama 3.3 70B Versatile
-- **API Key:** Stored in `app_secrets.dart` → `AppSecrets.groqApiKey`
 - **Input:** User transcript, cue card topic + prompts + sample answer, speaking duration
 - **Output:** `AiFeedback` object with band scores, comment, strengths, improvements, suggested vocab, improved answer
-- **Rate limiting:** Daily count tracked in `PrefsRepository` (5 free / 15 premium)
+- **Rate limiting:** 5 free / 15 premium per day
 - **Method:** `AiService.evaluateAnswer()`
-- **Check:** `AiService.isConfigured` returns false if API key is empty
+- **Check:** `AiService.isConfigured` → false if API key is empty
+
+### MockInterviewService (`mock_interview_service.dart`) — Full Mock Interview
+- **Same API/Model** as AiService (Groq, Llama 3.3 70B)
+- **2 API calls per interview:**
+  1. `generateQuestions()` — generates Part 1 questions (2 topics × 3 Qs) + Part 3 questions (4 Qs) based on cue card topic
+  2. `evaluateInterview()` — evaluates all transcripts across all 3 parts → `MockInterviewResult`
+- **Rate limiting:** 1 lifetime free trial / 5 per day premium
+- **Check:** `MockInterviewService.isConfigured` → false if API key is empty
 
 ---
 
@@ -345,9 +401,57 @@ band8:            0xFF6A1B9A
 
 - **App is LIVE** — never break existing functionality
 - **Free card limit** = 50 — changing `kFreeCardLimit` affects premium gating everywhere
-- **AI daily limit** — 5 (free) / 15 (premium) — hardcoded in `PrefsRepository`
+- **AI cue card daily limit** — 5 (free) / 15 (premium) — hardcoded in `PrefsRepository`
+- **Mock interview limit** — 1 lifetime free trial / 5 per day premium — in `PrefsRepository`
 - **All new features should be additive** — new files, new routes, new JSON assets
 - **No backend server** — everything is local storage + Groq API + Google Play
 - **Test on both light and dark themes** — both are fully customised
 - **AdMob test IDs** are used in debug mode automatically
 - **`app_secrets.dart`** must exist locally with real keys for AI and ads to work
+
+---
+
+## 17. Full Mock Interview Feature
+
+### Overview
+Simulates a complete IELTS Speaking test (Part 1 + Part 2 + Part 3) with AI-powered evaluation.
+
+### Interview Flow
+1. **Home** → tap "Full Mock Interview" → **Intro Screen** (explains format, checks credits)
+2. **Loading** → AI generates Part 1 + Part 3 questions (1 API call)
+3. **Part 1 Intro** → animated title card (auto-advance 2.5s)
+4. **Part 1** → 6 questions (2 topics × 3), 30s per question, tap mic to speak
+5. **Part 2 Intro** → animated title card (auto-advance 2.5s)
+6. **Part 2 Prep** → Cue card displayed, 60s preparation timer
+7. **Part 2 Speaking** → 120s speaking timer with live transcription
+8. **Part 3 Intro** → animated title card (auto-advance 2.5s)
+9. **Part 3** → 4 discussion questions, 45s per question, tap mic to speak
+10. **Analyzing** → AI evaluates all transcripts (1 API call)
+11. **Results Screen** → overall band, per-criterion bars, per-part scores + feedback, vocab, improved answer
+12. **Free users** → premium upsell card below results ("Unlock Unlimited — ₹199 Lifetime")
+
+### Timing Constants (in `mock_interview_screen.dart`)
+| Constant | Value | Purpose |
+|----------|-------|---------|
+| `kPart1SecsPerQ` | 30 | Seconds per Part 1 question |
+| `kPart2PrepSecs` | 60 | Part 2 preparation time |
+| `kPart2SpeakSecs` | 120 | Part 2 speaking time |
+| `kPart3SecsPerQ` | 45 | Seconds per Part 3 question |
+| `kPartIntroDurationMs` | 2500 | Part intro screen display time |
+
+### Credit System
+| User Type | Mock Interviews | Tracked By |
+|-----------|----------------|------------|
+| Free | 1 total (lifetime trial) | `mock_free_completed` bool |
+| Premium | 5/day | `mock_daily_count` + `mock_daily_date` |
+
+### Key Methods in PrefsRepository
+- `canDoMockInterview()` — checks if user can start a mock interview
+- `getMockRemaining()` — remaining interviews available
+- `hasMockFreeBeenUsed()` — whether free trial is consumed
+- `incrementMockCount()` — called after completing a mock interview
+
+### Monetisation Strategy
+- Free user completes 1 mock interview → sees results → premium upsell card appears
+- After trial used, intro screen "Start" button changes to "Upgrade to Premium"
+- Existing cue card AI practice (5/day free) runs independently — not affected
