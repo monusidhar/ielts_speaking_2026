@@ -44,157 +44,159 @@ class MockInterviewResultScreen extends StatelessWidget {
             child: CustomScrollView(
               physics: const BouncingScrollPhysics(),
               slivers: [
-            // ── Header ─────────────────────────────────────────────────
-            SliverToBoxAdapter(child: _buildHeader(isDark)),
-            SliverToBoxAdapter(
-                child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-              child: Column(children: [
-                // ── Overall band ───────────────────────────────────────
-                _buildOverallBand(isDark),
-                const SizedBox(height: 16),
+                // ── Header ─────────────────────────────────────────────────
+                SliverToBoxAdapter(child: _buildHeader(isDark)),
+                SliverToBoxAdapter(
+                    child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                  child: Column(children: [
+                    // ── Overall band ───────────────────────────────────────
+                    _buildOverallBand(isDark),
+                    const SizedBox(height: 16),
 
-                // ── Criteria breakdown ─────────────────────────────────
-                _buildCriteriaCard(isDark),
-                const SizedBox(height: 16),
+                    // ── Criteria breakdown ─────────────────────────────────
+                    _buildCriteriaCard(isDark),
+                    const SizedBox(height: 16),
 
-                // ── Part scores ────────────────────────────────────────
-                _buildPartScores(isDark),
-                const SizedBox(height: 16),
+                    // ── Part scores ────────────────────────────────────────
+                    _buildPartScores(isDark),
+                    const SizedBox(height: 16),
 
-                // ── Overall comment ────────────────────────────────────
-                _buildSection(
-                  isDark,
-                  icon: Icons.chat_rounded,
-                  title: 'Overall Assessment',
-                  color: const Color(0xFF6A1B9A),
-                  child: Text(result.overallComment,
-                      style: TextStyle(
-                          fontSize: 14,
-                          color: isDark
-                              ? const Color(0xFFCDD5E0)
-                              : const Color(0xFF333355),
-                          height: 1.6)),
-                ),
-                const SizedBox(height: 16),
-
-                // ── Strengths ──────────────────────────────────────────
-                _buildSection(
-                  isDark,
-                  icon: Icons.thumb_up_rounded,
-                  title: 'Strengths',
-                  color: const Color(0xFF2E7D32),
-                  child: Column(
-                    children: result.strengths
-                        .map((s) => _BulletItem(
-                            text: s,
-                            color: const Color(0xFF2E7D32),
-                            isDark: isDark))
-                        .toList(),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // ── Improvements ───────────────────────────────────────
-                _buildSection(
-                  isDark,
-                  icon: Icons.trending_up_rounded,
-                  title: 'Areas to Improve',
-                  color: const Color(0xFFE65100),
-                  child: Column(
-                    children: result.improvements
-                        .map((s) => _BulletItem(
-                            text: s,
-                            color: const Color(0xFFE65100),
-                            isDark: isDark))
-                        .toList(),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // ── Suggested vocabulary ───────────────────────────────
-                if (result.suggestedVocabulary.isNotEmpty)
-                  _buildSection(
-                    isDark,
-                    icon: Icons.spellcheck_rounded,
-                    title: 'Suggested Vocabulary',
-                    color: const Color(0xFF00695C),
-                    child: Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: result.suggestedVocabulary
-                          .map((v) => Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 6),
-                                decoration: BoxDecoration(
-                                  color:
-                                      const Color(0xFF00695C).withOpacity(0.08),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(v,
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        color: isDark
-                                            ? const Color(0xFFCDD5E0)
-                                            : const Color(0xFF333355))),
-                              ))
-                          .toList(),
+                    // ── Overall comment ────────────────────────────────────
+                    _buildSection(
+                      isDark,
+                      icon: Icons.chat_rounded,
+                      title: 'Overall Assessment',
+                      color: const Color(0xFF6A1B9A),
+                      child: Text(result.overallComment,
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: isDark
+                                  ? const Color(0xFFCDD5E0)
+                                  : const Color(0xFF333355),
+                              height: 1.6)),
                     ),
-                  ),
-                if (result.suggestedVocabulary.isNotEmpty)
-                  const SizedBox(height: 16),
+                    const SizedBox(height: 16),
 
-                // ── Improved Part 2 answer ─────────────────────────────
-                if (result.improvedPart2Answer.isNotEmpty)
-                  _buildSection(
-                    isDark,
-                    icon: Icons.auto_fix_high_rounded,
-                    title: 'Improved Part 2 Answer',
-                    color: const Color(0xFF1565C0),
-                    child: Text(result.improvedPart2Answer,
-                        style: TextStyle(
-                            fontSize: 13,
-                            color: isDark
-                                ? const Color(0xFFCDD5E0)
-                                : const Color(0xFF333355),
-                            height: 1.6,
-                            fontStyle: FontStyle.italic)),
-                  ),
-                if (result.improvedPart2Answer.isNotEmpty)
-                  const SizedBox(height: 16),
-
-                // ── Premium upsell for free users ──────────────────────
-                if (!isPremium) ...[
-                  _buildPremiumUpsell(context, isDark),
-                  const SizedBox(height: 16),
-                ],
-
-                // ── Done button ────────────────────────────────────────
-                SizedBox(
-                  width: double.infinity,
-                  height: 54,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.of(context).popUntil((route) => route.isFirst);
-                      Navigator.pushReplacementNamed(context, AppRoutes.home);
-                    },
-                    icon: const Icon(Icons.home_rounded, size: 20),
-                    label: const Text('Back to Home',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF6A1B9A),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16)),
+                    // ── Strengths ──────────────────────────────────────────
+                    _buildSection(
+                      isDark,
+                      icon: Icons.thumb_up_rounded,
+                      title: 'Strengths',
+                      color: const Color(0xFF2E7D32),
+                      child: Column(
+                        children: result.strengths
+                            .map((s) => _BulletItem(
+                                text: s,
+                                color: const Color(0xFF2E7D32),
+                                isDark: isDark))
+                            .toList(),
+                      ),
                     ),
-                  ),
-                ),
-                const SizedBox(height: 32),
-              ]),
-            )),
-          ],
-        ),
+                    const SizedBox(height: 16),
+
+                    // ── Improvements ───────────────────────────────────────
+                    _buildSection(
+                      isDark,
+                      icon: Icons.trending_up_rounded,
+                      title: 'Areas to Improve',
+                      color: const Color(0xFFE65100),
+                      child: Column(
+                        children: result.improvements
+                            .map((s) => _BulletItem(
+                                text: s,
+                                color: const Color(0xFFE65100),
+                                isDark: isDark))
+                            .toList(),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // ── Suggested vocabulary ───────────────────────────────
+                    if (result.suggestedVocabulary.isNotEmpty)
+                      _buildSection(
+                        isDark,
+                        icon: Icons.spellcheck_rounded,
+                        title: 'Suggested Vocabulary',
+                        color: const Color(0xFF00695C),
+                        child: Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: result.suggestedVocabulary
+                              .map((v) => Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 6),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF00695C)
+                                          .withOpacity(0.08),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(v,
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: isDark
+                                                ? const Color(0xFFCDD5E0)
+                                                : const Color(0xFF333355))),
+                                  ))
+                              .toList(),
+                        ),
+                      ),
+                    if (result.suggestedVocabulary.isNotEmpty)
+                      const SizedBox(height: 16),
+
+                    // ── Improved Part 2 answer ─────────────────────────────
+                    if (result.improvedPart2Answer.isNotEmpty)
+                      _buildSection(
+                        isDark,
+                        icon: Icons.auto_fix_high_rounded,
+                        title: 'Improved Part 2 Answer',
+                        color: const Color(0xFF1565C0),
+                        child: Text(result.improvedPart2Answer,
+                            style: TextStyle(
+                                fontSize: 13,
+                                color: isDark
+                                    ? const Color(0xFFCDD5E0)
+                                    : const Color(0xFF333355),
+                                height: 1.6,
+                                fontStyle: FontStyle.italic)),
+                      ),
+                    if (result.improvedPart2Answer.isNotEmpty)
+                      const SizedBox(height: 16),
+
+                    // ── Premium upsell for free users ──────────────────────
+                    if (!isPremium) ...[
+                      _buildPremiumUpsell(context, isDark),
+                      const SizedBox(height: 16),
+                    ],
+
+                    // ── Done button ────────────────────────────────────────
+                    SizedBox(
+                      width: double.infinity,
+                      height: 54,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.of(context)
+                              .popUntil((route) => route.isFirst);
+                          Navigator.pushReplacementNamed(
+                              context, AppRoutes.home);
+                        },
+                        icon: const Icon(Icons.home_rounded, size: 20),
+                        label: const Text('Back to Home',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF6A1B9A),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16)),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                  ]),
+                )),
+              ],
+            ),
           ),
           const BannerAdWidget(),
         ]),

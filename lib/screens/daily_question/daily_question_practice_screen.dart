@@ -66,8 +66,8 @@ class _DailyQuestionPracticeScreenState
     _pulseCtrl = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 700))
       ..repeat(reverse: true);
-    _pulseAnim = Tween<double>(begin: 0.85, end: 1.15).animate(
-        CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+    _pulseAnim = Tween<double>(begin: 0.85, end: 1.15)
+        .animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
 
     _initSpeech();
   }
@@ -243,7 +243,8 @@ class _DailyQuestionPracticeScreenState
     } catch (e) {
       if (mounted) {
         setState(() {
-          _errorMessage = 'AI analysis failed: ${e.toString().length > 200 ? e.toString().substring(0, 200) : e}';
+          _errorMessage =
+              'AI analysis failed: ${e.toString().length > 200 ? e.toString().substring(0, 200) : e}';
           _phase = _Phase.done;
         });
       }
@@ -273,8 +274,7 @@ class _DailyQuestionPracticeScreenState
             context: context,
             builder: (ctx) => AlertDialog(
               title: const Text('Stop Recording?'),
-              content:
-                  const Text('Your progress will be lost if you go back.'),
+              content: const Text('Your progress will be lost if you go back.'),
               actions: [
                 TextButton(
                     onPressed: () => Navigator.pop(ctx),
@@ -374,9 +374,8 @@ class _DailyQuestionPracticeScreenState
           child: Column(children: [
             Icon(Icons.psychology_rounded,
                 size: 40,
-                color: isDark
-                    ? const Color(0xFF4DB6FF)
-                    : const Color(0xFF1565C0)),
+                color:
+                    isDark ? const Color(0xFF4DB6FF) : const Color(0xFF1565C0)),
             const SizedBox(height: 16),
             Text(widget.question,
                 textAlign: TextAlign.center,
@@ -422,8 +421,7 @@ class _DailyQuestionPracticeScreenState
                     offset: const Offset(0, 6))
               ],
             ),
-            child:
-                const Icon(Icons.mic_rounded, color: Colors.white, size: 36),
+            child: const Icon(Icons.mic_rounded, color: Colors.white, size: 36),
           ),
         ),
         const SizedBox(height: 12),
@@ -439,9 +437,8 @@ class _DailyQuestionPracticeScreenState
           'AI practices remaining today: ${PrefsRepository.getAiRemaining()}',
           style: TextStyle(
               fontSize: 11,
-              color: isDark
-                  ? const Color(0xFF446688)
-                  : const Color(0xFF999999)),
+              color:
+                  isDark ? const Color(0xFF446688) : const Color(0xFF999999)),
         ),
       ],
     );
@@ -450,9 +447,8 @@ class _DailyQuestionPracticeScreenState
   // ── Speaking: timer + waveform ─────────────────────────────────────────
 
   Widget _buildSpeaking(bool isDark) {
-    final timerColor = _secsLeft <= 10
-        ? const Color(0xFFC62828)
-        : const Color(0xFF2E7D32);
+    final timerColor =
+        _secsLeft <= 10 ? const Color(0xFFC62828) : const Color(0xFF2E7D32);
 
     return Column(
       children: [
@@ -575,8 +571,7 @@ class _DailyQuestionPracticeScreenState
           height: 56,
           child: CircularProgressIndicator(
             strokeWidth: 3,
-            color:
-                isDark ? const Color(0xFF4DB6FF) : const Color(0xFF1565C0),
+            color: isDark ? const Color(0xFF4DB6FF) : const Color(0xFF1565C0),
           ),
         ),
         const SizedBox(height: 20),
@@ -650,8 +645,7 @@ class _DailyQuestionPracticeScreenState
                       fontSize: 44,
                       fontWeight: FontWeight.bold)),
               Text(_bandLabel(f.overallBand),
-                  style: const TextStyle(
-                      color: Colors.white, fontSize: 13)),
+                  style: const TextStyle(color: Colors.white, fontSize: 13)),
             ]),
           ),
         ),
@@ -690,7 +684,8 @@ class _DailyQuestionPracticeScreenState
             _sectionTitle('Strengths', Icons.thumb_up_rounded,
                 const Color(0xFF2E7D32), isDark),
             const SizedBox(height: 10),
-            ...f.strengths.map((s) => _bullet(s, const Color(0xFF2E7D32), isDark)),
+            ...f.strengths
+                .map((s) => _bullet(s, const Color(0xFF2E7D32), isDark)),
           ]),
           const SizedBox(height: 14),
         ],
@@ -701,8 +696,8 @@ class _DailyQuestionPracticeScreenState
             _sectionTitle('Areas to Improve', Icons.trending_up_rounded,
                 const Color(0xFFE65100), isDark),
             const SizedBox(height: 10),
-            ...f.improvements.map(
-                (s) => _bullet(s, const Color(0xFFE65100), isDark)),
+            ...f.improvements
+                .map((s) => _bullet(s, const Color(0xFFE65100), isDark)),
           ]),
           const SizedBox(height: 14),
         ],
@@ -796,8 +791,7 @@ class _DailyQuestionPracticeScreenState
     );
   }
 
-  Widget _sectionTitle(
-      String title, IconData icon, Color color, bool isDark) {
+  Widget _sectionTitle(String title, IconData icon, Color color, bool isDark) {
     return Row(children: [
       Container(
         width: 28,
@@ -812,9 +806,8 @@ class _DailyQuestionPracticeScreenState
           style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w700,
-              color: isDark
-                  ? const Color(0xFFE8EAF0)
-                  : const Color(0xFF1A1A2E))),
+              color:
+                  isDark ? const Color(0xFFE8EAF0) : const Color(0xFF1A1A2E))),
     ]);
   }
 
@@ -875,9 +868,8 @@ class _DailyQuestionPracticeScreenState
           style: TextStyle(
               fontSize: 13,
               height: 1.6,
-              color: isDark
-                  ? const Color(0xFF8899AA)
-                  : const Color(0xFF555577)));
+              color:
+                  isDark ? const Color(0xFF8899AA) : const Color(0xFF555577)));
     }
 
     final flagged = f.pronunciationFlags.map((w) => w.toLowerCase()).toSet();

@@ -249,9 +249,8 @@ class _AiFeedbackScreenState extends State<AiFeedbackScreen>
           style: TextStyle(
               fontSize: 13.5,
               height: 1.6,
-              color: isDark
-                  ? const Color(0xFF8899AA)
-                  : const Color(0xFF555577)));
+              color:
+                  isDark ? const Color(0xFF8899AA) : const Color(0xFF555577)));
     }
 
     // Build a set of lowercase flagged words for matching

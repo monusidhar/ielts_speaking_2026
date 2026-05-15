@@ -36,112 +36,121 @@ class MockInterviewIntroScreen extends StatelessWidget {
             physics: const BouncingScrollPhysics(),
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
             child: Column(children: [
-          // ── Header icon ──────────────────────────────────────────────
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF6A1B9A), Color(0xFF8E24AA)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+              // ── Header icon ──────────────────────────────────────────────
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF6A1B9A), Color(0xFF8E24AA)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF6A1B9A).withOpacity(0.3),
+                      blurRadius: 16,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: const Icon(Icons.record_voice_over_rounded,
+                    color: Colors.white, size: 36),
               ),
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF6A1B9A).withOpacity(0.3),
-                  blurRadius: 16,
-                  offset: const Offset(0, 6),
+              const SizedBox(height: 20),
+              Text(
+                'Full IELTS Speaking\nMock Test',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: isDark
+                      ? const Color(0xFFE8EAF0)
+                      : const Color(0xFF1A1A2E),
+                  height: 1.3,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Experience a complete IELTS Speaking test\nwith AI-powered evaluation',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: isDark
+                      ? const Color(0xFF8899AA)
+                      : const Color(0xFF555577),
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: 28),
+
+              // ── Test format card ─────────────────────────────────────────
+              _buildFormatCard(isDark),
+              const SizedBox(height: 16),
+
+              // ── Credit status ────────────────────────────────────────────
+              _buildCreditCard(isDark, isPremium, remaining),
+              const SizedBox(height: 16),
+
+              // ── Important notes ──────────────────────────────────────────
+              _buildNotesCard(isDark),
+              const SizedBox(height: 28),
+
+              // ── Start button ─────────────────────────────────────────────
+              SizedBox(
+                width: double.infinity,
+                height: 54,
+                child: ElevatedButton(
+                  onPressed: canStart
+                      ? () =>
+                          Navigator.pushNamed(context, AppRoutes.mockInterview)
+                      : () => Navigator.pushNamed(context, AppRoutes.premium),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: canStart
+                        ? const Color(0xFF6A1B9A)
+                        : const Color(0xFFFFB300),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
+                    elevation: canStart ? 4 : 2,
+                  ),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                            canStart
+                                ? Icons.play_arrow_rounded
+                                : Icons.workspace_premium_rounded,
+                            size: 22),
+                        const SizedBox(width: 8),
+                        Text(
+                          canStart
+                              ? 'Start Mock Interview'
+                              : 'Upgrade to Premium',
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ]),
+                ),
+              ),
+
+              if (!canStart && !isPremium) ...[
+                const SizedBox(height: 12),
+                Text(
+                  'You\'ve used your free trial. Upgrade for unlimited mock interviews!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isDark
+                        ? const Color(0xFFFFB300)
+                        : const Color(0xFFE65100),
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ],
-            ),
-            child: const Icon(Icons.record_voice_over_rounded,
-                color: Colors.white, size: 36),
+            ]),
           ),
-          const SizedBox(height: 20),
-          Text(
-            'Full IELTS Speaking\nMock Test',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: isDark ? const Color(0xFFE8EAF0) : const Color(0xFF1A1A2E),
-              height: 1.3,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Experience a complete IELTS Speaking test\nwith AI-powered evaluation',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 13,
-              color: isDark ? const Color(0xFF8899AA) : const Color(0xFF555577),
-              height: 1.5,
-            ),
-          ),
-          const SizedBox(height: 28),
-
-          // ── Test format card ─────────────────────────────────────────
-          _buildFormatCard(isDark),
-          const SizedBox(height: 16),
-
-          // ── Credit status ────────────────────────────────────────────
-          _buildCreditCard(isDark, isPremium, remaining),
-          const SizedBox(height: 16),
-
-          // ── Important notes ──────────────────────────────────────────
-          _buildNotesCard(isDark),
-          const SizedBox(height: 28),
-
-          // ── Start button ─────────────────────────────────────────────
-          SizedBox(
-            width: double.infinity,
-            height: 54,
-            child: ElevatedButton(
-              onPressed: canStart
-                  ? () => Navigator.pushNamed(context, AppRoutes.mockInterview)
-                  : () => Navigator.pushNamed(context, AppRoutes.premium),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: canStart
-                    ? const Color(0xFF6A1B9A)
-                    : const Color(0xFFFFB300),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16)),
-                elevation: canStart ? 4 : 2,
-              ),
-              child:
-                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Icon(
-                    canStart
-                        ? Icons.play_arrow_rounded
-                        : Icons.workspace_premium_rounded,
-                    size: 22),
-                const SizedBox(width: 8),
-                Text(
-                  canStart ? 'Start Mock Interview' : 'Upgrade to Premium',
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-              ]),
-            ),
-          ),
-
-          if (!canStart && !isPremium) ...[
-            const SizedBox(height: 12),
-            Text(
-              'You\'ve used your free trial. Upgrade for unlimited mock interviews!',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 12,
-                color:
-                    isDark ? const Color(0xFFFFB300) : const Color(0xFFE65100),
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ]),
-      ),
         ),
         const BannerAdWidget(),
       ]),

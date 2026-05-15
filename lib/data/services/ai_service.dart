@@ -58,8 +58,7 @@ class AiFeedback {
       suggestedVocabulary:
           List<String>.from(json['suggested_vocabulary'] ?? []),
       improvedAnswer: json['improved_answer'] as String? ?? '',
-      pronunciationFlags:
-          List<String>.from(json['pronunciation_flags'] ?? []),
+      pronunciationFlags: List<String>.from(json['pronunciation_flags'] ?? []),
     );
   }
 
@@ -361,7 +360,8 @@ Return ONLY the raw JSON object. No markdown, no code fences, no extra text.
       client.close();
 
       return {
-        'question': parsed['question'] as String? ?? 'What do you enjoy doing in your free time?',
+        'question': parsed['question'] as String? ??
+            'What do you enjoy doing in your free time?',
         'part': parsed['part'] as String? ?? 'Part 1',
       };
     } catch (e) {

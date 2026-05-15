@@ -26,7 +26,8 @@ class PrefsRepository {
   // ── Daily AI Question keys ─────────────────────────────────────────────
   static const _kDailyQuestionText = 'daily_question_text'; // String
   static const _kDailyQuestionPart = 'daily_question_part'; // String (Part 1/3)
-  static const _kDailyQuestionDate = 'daily_question_date'; // String (yyyy-MM-dd)
+  static const _kDailyQuestionDate =
+      'daily_question_date'; // String (yyyy-MM-dd)
 
   // ── Singleton ──────────────────────────────────────────────────────────────
   static SharedPreferences? _prefs;
