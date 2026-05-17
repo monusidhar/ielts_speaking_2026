@@ -182,6 +182,12 @@ class BillingService {
     if (!_isPlatformSupported || !_available) return;
     stateNotifier.value = BillingState.loading;
     await _restorePurchases();
+    // If no purchase was found, the stream won't fire any events,
+    // so reset back to idle after a short delay.
+    await Future.delayed(const Duration(seconds: 3));
+    if (stateNotifier.value == BillingState.loading) {
+      stateNotifier.value = BillingState.idle;
+    }
   }
 
   // ── Getters ────────────────────────────────────────────────────────────────
