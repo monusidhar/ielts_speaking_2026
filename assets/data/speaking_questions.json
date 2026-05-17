@@ -1,0 +1,523 @@
+{
+  "version": "2.0.0",
+  "part1": {
+    "total_topics": 20,
+    "topics": [
+      {
+        "id": 1,
+        "topic": "Home & Accommodation",
+        "tips": ["Describe your home using specific adjectives — avoid just 'nice' or 'good'", "Compare your current home with a past one to show range of tenses", "Give a reason for your preferences, not just yes/no"],
+        "vocabulary": [
+          {"word": "spacious", "meaning": "large and roomy"},
+          {"word": "cosy", "meaning": "warm, comfortable and small"},
+          {"word": "neighbourhood", "meaning": "the area around where you live"},
+          {"word": "furnished", "meaning": "equipped with furniture"},
+          {"word": "detached", "meaning": "a house not joined to another building"}
+        ],
+        "questions": [
+          {"question": "Do you live in a house or an apartment?", "sample_answer": "I currently live in a two-bedroom apartment on the fourth floor of a modern building. It's quite spacious and has a lovely balcony where I enjoy my morning coffee while watching the sunrise."},
+          {"question": "What is your favourite room in your home?", "sample_answer": "My favourite room is definitely my living room because it's the most spacious area in the flat. I've decorated it with warm lighting and comfortable cushions, so it feels really cosy when I'm relaxing there in the evenings."},
+          {"question": "Would you like to move to a different home in the future?", "sample_answer": "Yes, I'd love to move to a detached house with a garden someday. I've always dreamed of having outdoor space where I could grow vegetables and perhaps have a small dog running around."},
+          {"question": "What do you like most about your neighbourhood?", "sample_answer": "What I appreciate most is how convenient everything is — there's a supermarket just a five-minute walk away, and the local park is perfect for jogging. The neighbours are also quite friendly and we sometimes have community gatherings."}
+        ]
+      },
+      {
+        "id": 2,
+        "topic": "Work & Studies",
+        "tips": ["Be specific about what you study or do — mention your field or job title", "Talk about both positive aspects and challenges to show balance", "Use the present perfect to talk about experiences: 'I have been working...'"],
+        "vocabulary": [
+          {"word": "rewarding", "meaning": "giving satisfaction or a sense of achievement"},
+          {"word": "demanding", "meaning": "requiring a lot of effort or attention"},
+          {"word": "pursue", "meaning": "to follow or work towards something"},
+          {"word": "aspire", "meaning": "to have a strong desire to achieve something"},
+          {"word": "hands-on", "meaning": "involving practical experience rather than theory"}
+        ],
+        "questions": [
+          {"question": "Do you work or are you a student?", "sample_answer": "I'm currently a final-year university student majoring in computer science. It's been a demanding but incredibly rewarding journey, and I'm looking forward to graduating next semester."},
+          {"question": "What do you like most about your job or studies?", "sample_answer": "What I enjoy most is the hands-on project work where we get to build real applications. It's fascinating to see theoretical concepts come alive when you write code that actually solves a practical problem."},
+          {"question": "Would you like to change your job or field of study?", "sample_answer": "Not really — I'm quite passionate about technology and I can see myself building a career in this field. However, I might consider specialising in artificial intelligence because it's such a rapidly growing area."},
+          {"question": "What did you want to be when you were a child?", "sample_answer": "When I was about seven or eight, I aspired to be an astronaut because I was absolutely fascinated by space documentaries. As I grew older, my interests shifted towards technology, which is how I ended up studying computer science."}
+        ]
+      },
+      {
+        "id": 3,
+        "topic": "Hobbies & Free Time",
+        "tips": ["Talk about how your hobbies make you feel, not just what you do", "Use frequency adverbs: 'occasionally', 'regularly', 'from time to time'", "Compare past and present hobbies to demonstrate tense range"],
+        "vocabulary": [
+          {"word": "leisure", "meaning": "free time when you are not working"},
+          {"word": "pastime", "meaning": "an activity done for enjoyment"},
+          {"word": "therapeutic", "meaning": "having a healing or calming effect"},
+          {"word": "engrossed", "meaning": "completely absorbed in something"},
+          {"word": "unwind", "meaning": "to relax after a period of work or stress"}
+        ],
+        "questions": [
+          {"question": "What do you enjoy doing in your free time?", "sample_answer": "In my leisure time, I really enjoy reading novels and going for long walks in the park. Reading is quite therapeutic for me — it helps me unwind after a stressful day, and walking keeps me physically active."},
+          {"question": "Have your hobbies changed since you were a child?", "sample_answer": "Absolutely. When I was younger, I used to spend most of my free time playing outdoor games with neighbourhood children. Now, I've become more interested in quieter pastimes like reading and photography."},
+          {"question": "Do you prefer indoor or outdoor activities?", "sample_answer": "I'd say I prefer a mix of both, but if I had to choose, I'd lean towards outdoor activities. There's something incredibly refreshing about being surrounded by nature, whether it's hiking or simply jogging in a local park."},
+          {"question": "Is there a new hobby you would like to try?", "sample_answer": "I've been thinking about learning to play the guitar for quite some time now. I find the sound of acoustic guitar really soothing, and I think it would be a wonderful skill to have for social gatherings."}
+        ]
+      },
+      {
+        "id": 4,
+        "topic": "Food & Cooking",
+        "tips": ["Use sensory language: taste, smell, texture, appearance", "Share a personal anecdote about a memorable food experience", "Name specific dishes rather than speaking in general terms"],
+        "vocabulary": [
+          {"word": "cuisine", "meaning": "a style of cooking from a particular region"},
+          {"word": "flavourful", "meaning": "having a lot of taste"},
+          {"word": "staple", "meaning": "a food that forms a basic part of the diet"},
+          {"word": "wholesome", "meaning": "good for health and well-being"},
+          {"word": "delicacy", "meaning": "a rare or expensive food considered special"}
+        ],
+        "questions": [
+          {"question": "What kind of food do you like to eat?", "sample_answer": "I'm quite fond of Indian cuisine, particularly dishes like biryani and butter chicken because they're incredibly flavourful. I also enjoy experimenting with Italian food, especially homemade pasta with fresh pesto sauce."},
+          {"question": "Do you enjoy cooking? Why or why not?", "sample_answer": "Yes, I find cooking quite therapeutic actually. There's a sense of accomplishment when you prepare a wholesome meal from scratch, and I particularly enjoy the creative aspect of trying new recipes on weekends."},
+          {"question": "What is a popular dish in your country?", "sample_answer": "One of the most popular staple dishes in my country is dal and rice, which is a lentil curry served with steamed rice. It's a comfort food that virtually every household prepares, and each region has its own unique variation."},
+          {"question": "Have you ever tried food from another country?", "sample_answer": "Yes, I've tried Japanese sushi a few times and I absolutely loved it. The combination of fresh fish, vinegared rice and wasabi was quite different from what I was used to, but the flavours were really delicate and appealing."}
+        ]
+      },
+      {
+        "id": 5,
+        "topic": "Weather & Seasons",
+        "tips": ["Use weather-related idioms naturally: 'under the weather', 'a breath of fresh air'", "Describe how weather affects your daily activities or mood", "Compare seasons using comparative and superlative forms"],
+        "vocabulary": [
+          {"word": "humid", "meaning": "having a high level of moisture in the air"},
+          {"word": "scorching", "meaning": "extremely hot"},
+          {"word": "breeze", "meaning": "a light, gentle wind"},
+          {"word": "overcast", "meaning": "covered with clouds; not sunny"},
+          {"word": "chilly", "meaning": "unpleasantly cold"}
+        ],
+        "questions": [
+          {"question": "What is the weather like in your country?", "sample_answer": "My country has a tropical climate, so it's generally quite warm and humid throughout the year. We have three main seasons — summer, which can be scorching, the monsoon with heavy rainfall, and a mild winter."},
+          {"question": "Which season do you like best?", "sample_answer": "I'd have to say autumn is my favourite season because the weather is absolutely perfect — not too hot and not too cold. I love the gentle breeze and the beautiful colours of the changing leaves."},
+          {"question": "Does the weather affect your mood?", "sample_answer": "Definitely. On bright, sunny days I feel much more energetic and motivated to go out and be productive. When it's overcast and gloomy for several days, I tend to feel a bit sluggish and prefer staying indoors."},
+          {"question": "Do you prefer hot or cold weather?", "sample_answer": "I generally prefer slightly cold weather because you can always put on more layers to stay warm. With hot weather, there's only so much you can do — once it gets scorching, even air conditioning doesn't feel enough."}
+        ]
+      },
+      {
+        "id": 6,
+        "topic": "Travel & Holidays",
+        "tips": ["Use past tenses accurately when describing trips you've taken", "Include specific details: place names, what you saw, how you felt", "Compare different travel experiences to show range"],
+        "vocabulary": [
+          {"word": "itinerary", "meaning": "a planned route or journey"},
+          {"word": "breathtaking", "meaning": "extremely impressive or beautiful"},
+          {"word": "wander", "meaning": "to walk slowly without a clear direction"},
+          {"word": "getaway", "meaning": "a short holiday or escape"},
+          {"word": "immerse", "meaning": "to involve yourself completely in something"}
+        ],
+        "questions": [
+          {"question": "Do you enjoy travelling?", "sample_answer": "Absolutely, I love travelling! There's nothing quite like immersing yourself in a completely different culture and seeing breathtaking landscapes. I try to plan at least one trip every year, even if it's just a short getaway."},
+          {"question": "Where was the last place you visited?", "sample_answer": "The last place I visited was Jaipur, about three months ago. The architecture of the Amber Fort was absolutely stunning, and I really enjoyed wandering through the colourful local bazaars."},
+          {"question": "Do you prefer travelling alone or with others?", "sample_answer": "I prefer travelling with a small group of close friends because sharing experiences makes them more enjoyable. However, I've also done solo trips which were quite liberating — you have complete freedom over your itinerary."},
+          {"question": "What is the best holiday you have ever had?", "sample_answer": "The best holiday I've ever had was a week-long trip to Kerala. The combination of serene backwaters, delicious seafood, and lush green landscapes made it absolutely unforgettable."}
+        ]
+      },
+      {
+        "id": 7,
+        "topic": "Music",
+        "tips": ["Name specific genres, artists, or songs to make your answer vivid", "Explain why you enjoy certain music — the feeling it creates", "Use 'used to' for past habits to show grammatical range"],
+        "vocabulary": [
+          {"word": "melody", "meaning": "a sequence of musical notes forming a tune"},
+          {"word": "soothing", "meaning": "having a gentle calming effect"},
+          {"word": "rhythm", "meaning": "a strong regular repeated pattern of sound"},
+          {"word": "lyrics", "meaning": "the words of a song"},
+          {"word": "genre", "meaning": "a category or type of music"}
+        ],
+        "questions": [
+          {"question": "What kind of music do you like?", "sample_answer": "I'm quite eclectic in my taste, but I particularly enjoy soft rock and acoustic music. There's something about the combination of meaningful lyrics and gentle melodies that I find deeply moving and soothing."},
+          {"question": "Do you play any musical instrument?", "sample_answer": "I used to play the keyboard when I was in school, but unfortunately I haven't practised for years. I'd really like to pick it up again because I found it incredibly satisfying to create melodies."},
+          {"question": "Has your taste in music changed over the years?", "sample_answer": "Yes, quite significantly. As a teenager, I was really into pop and electronic music — anything with a fast rhythm. But as I've grown older, I've developed an appreciation for classical and folk music."},
+          {"question": "Do you prefer listening to music alone or with others?", "sample_answer": "It depends on my mood. When I want to concentrate or relax, I prefer listening alone with my headphones on. But at parties or social gatherings, sharing music with friends is really enjoyable."}
+        ]
+      },
+      {
+        "id": 8,
+        "topic": "Reading",
+        "tips": ["Mention specific book titles or authors to add credibility", "Describe what you gain from reading — knowledge, relaxation, imagination", "Compare digital vs physical reading with reasons"],
+        "vocabulary": [
+          {"word": "avid", "meaning": "very keen or enthusiastic"},
+          {"word": "captivating", "meaning": "very attractive and holding your attention"},
+          {"word": "engrossing", "meaning": "absorbing all your attention"},
+          {"word": "page-turner", "meaning": "a book so exciting you can't stop reading"},
+          {"word": "browse", "meaning": "to look through something casually"}
+        ],
+        "questions": [
+          {"question": "Do you enjoy reading?", "sample_answer": "Yes, I'm an avid reader. I try to read for at least thirty minutes before bed every night. I find it incredibly relaxing and it helps me switch off from the stresses of the day."},
+          {"question": "What kind of books or articles do you read?", "sample_answer": "I mostly read fiction — particularly mystery novels and thrillers because I find them really engrossing. I also enjoy browsing through technology articles online to stay updated with the latest developments."},
+          {"question": "Do you prefer reading on paper or on a screen?", "sample_answer": "I much prefer reading physical books because there's something special about the feel and smell of paper. Having said that, I do use my phone for reading news articles because it's more convenient on the go."},
+          {"question": "Did you read a lot when you were a child?", "sample_answer": "Absolutely. I was a real bookworm as a child — I used to devour one book after another, especially adventure stories like Harry Potter. My parents always encouraged reading, and I'm grateful for that."}
+        ]
+      },
+      {
+        "id": 9,
+        "topic": "Sports & Exercise",
+        "tips": ["Talk about frequency using adverbs: 'three times a week', 'regularly'", "Explain the benefits you personally experience from exercise", "Use both physical and mental health vocabulary"],
+        "vocabulary": [
+          {"word": "stamina", "meaning": "the ability to sustain physical effort"},
+          {"word": "discipline", "meaning": "training yourself to follow rules or a routine"},
+          {"word": "competitive", "meaning": "wanting to win or be better than others"},
+          {"word": "sedentary", "meaning": "involving a lot of sitting; not active"},
+          {"word": "endurance", "meaning": "the ability to do something difficult for a long time"}
+        ],
+        "questions": [
+          {"question": "Do you enjoy playing any sports?", "sample_answer": "Yes, I really enjoy playing badminton — I play with my friends almost every weekend. It's a fantastic way to stay active, and the competitive element makes it more exciting than just going to the gym."},
+          {"question": "How often do you exercise?", "sample_answer": "I try to exercise at least four times a week. On weekdays, I usually go for a morning jog or do some yoga, and on weekends I play sports. Regular exercise really helps with my stamina and overall mood."},
+          {"question": "What sports are popular in your country?", "sample_answer": "Cricket is by far the most popular sport in my country — it's almost like a religion here. Football is growing in popularity too, especially among younger people, and kabaddi has been gaining attention lately."},
+          {"question": "Do you prefer watching sports or playing them?", "sample_answer": "I'd say I prefer playing because it's a much more engaging experience — you get the physical benefits and the thrill of competition. That said, I do enjoy watching major tournaments like the World Cup."}
+        ]
+      },
+      {
+        "id": 10,
+        "topic": "Technology & Internet",
+        "tips": ["Give balanced views — mention both advantages and disadvantages", "Use specific examples of apps or technology you use daily", "Show awareness of how technology affects different generations"],
+        "vocabulary": [
+          {"word": "addictive", "meaning": "causing a strong habit that is hard to stop"},
+          {"word": "innovation", "meaning": "a new method, idea, or product"},
+          {"word": "digital literacy", "meaning": "ability to use technology effectively"},
+          {"word": "accessible", "meaning": "easy to reach, use, or understand"},
+          {"word": "screen time", "meaning": "time spent looking at a phone, computer, etc."}
+        ],
+        "questions": [
+          {"question": "How often do you use the internet?", "sample_answer": "I use the internet virtually every day — it's become an essential part of my daily routine. From checking emails and reading news to streaming music and doing research, I probably spend around four to five hours online daily."},
+          {"question": "What do you mainly use your phone for?", "sample_answer": "Primarily for communication — I use messaging apps like WhatsApp to stay in touch with family and friends. I also rely on it heavily for productivity apps, navigation, and occasionally watching educational videos."},
+          {"question": "Do you think people spend too much time on technology?", "sample_answer": "I think many people do, especially when it comes to social media which can be quite addictive. Having said that, technology has made so many things more accessible, so it's really about finding a healthy balance."},
+          {"question": "Has technology changed the way you communicate?", "sample_answer": "Enormously, yes. I remember writing letters to my grandparents, but now we video call every week. Technology has made it far easier to maintain long-distance relationships, though face-to-face conversations are still irreplaceable."}
+        ]
+      },
+      {
+        "id": 11, "topic": "Friends & Social Life",
+        "tips": ["Use relationship vocabulary: 'close-knit', 'bond', 'catch up'", "Share a brief anecdote about a friendship to make it personal", "Show different perspectives — quality vs quantity of friendships"],
+        "vocabulary": [{"word": "bond", "meaning": "a strong connection between people"}, {"word": "close-knit", "meaning": "a group of people who are very close"}, {"word": "socialise", "meaning": "to spend time with others in a friendly way"}, {"word": "catch up", "meaning": "to talk with someone after not seeing them"}, {"word": "acquaintance", "meaning": "someone you know slightly but not well"}],
+        "questions": [
+          {"question": "Do you prefer having a few close friends or many friends?", "sample_answer": "I definitely prefer having a small circle of close friends rather than many acquaintances. I value deep, meaningful bonds where you can truly be yourself and rely on each other during difficult times."},
+          {"question": "How do you usually spend time with your friends?", "sample_answer": "We usually catch up over coffee or go out for meals together on weekends. Sometimes we organise game nights at someone's house, which is always great fun and a wonderful way to unwind."},
+          {"question": "Have you made any new friends recently?", "sample_answer": "Actually, yes — I met someone at a photography workshop last month and we really hit it off. We share similar interests and have already been on a couple of photo walks together."},
+          {"question": "Do you stay in touch with childhood friends?", "sample_answer": "I stay in touch with a couple of my closest childhood friends through social media and occasional video calls. While we've all moved to different cities, the bond we formed growing up is still quite strong."}
+        ]
+      },
+      {
+        "id": 12, "topic": "Shopping",
+        "tips": ["Compare online and offline shopping with specific reasons", "Mention impulse buying vs planned shopping for variety", "Use money-related vocabulary naturally"],
+        "vocabulary": [{"word": "bargain", "meaning": "something bought cheaply or for less than usual"}, {"word": "impulse buy", "meaning": "buying something without planning to"}, {"word": "browse", "meaning": "to look at things casually without buying"}, {"word": "affordable", "meaning": "not expensive; reasonably priced"}, {"word": "splurge", "meaning": "to spend a lot of money on something special"}],
+        "questions": [
+          {"question": "Do you enjoy shopping?", "sample_answer": "It depends on what I'm shopping for. I quite enjoy browsing for clothes and books — it's almost like a leisure activity for me. However, grocery shopping feels more like a chore."},
+          {"question": "Do you prefer shopping online or in stores?", "sample_answer": "For everyday items, I prefer shopping online because it's incredibly convenient and you can easily compare prices. But for clothes and shoes, I prefer going to stores because I need to try them on."},
+          {"question": "What was the last thing you bought?", "sample_answer": "The last thing I bought was a pair of wireless earphones. I'd been researching different brands for weeks and finally found an affordable pair with great reviews."},
+          {"question": "Do you compare prices before buying something?", "sample_answer": "Absolutely, especially for bigger purchases. I usually check prices across several websites and read reviews before deciding. I enjoy finding a good bargain — it gives me real satisfaction."}
+        ]
+      },
+      {
+        "id": 13, "topic": "Daily Routine",
+        "tips": ["Use time markers: 'first thing in the morning', 'around noon', 'by the evening'", "Describe both weekday and weekend routines for contrast", "Use present simple for habits and would like + infinitive for changes"],
+        "vocabulary": [{"word": "hectic", "meaning": "very busy and full of activity"}, {"word": "routine", "meaning": "a regular way of doing things"}, {"word": "productive", "meaning": "achieving a lot; working effectively"}, {"word": "commute", "meaning": "the journey from home to work"}, {"word": "wind down", "meaning": "to relax gradually at the end of the day"}],
+        "questions": [
+          {"question": "What is your typical daily routine?", "sample_answer": "I usually wake up around 6:30, have a quick workout, then shower and have breakfast before my commute. My workday is quite hectic, but I try to wind down in the evenings by reading."},
+          {"question": "Are you a morning person or a night person?", "sample_answer": "I'm definitely a morning person — I feel most productive and energetic in the first few hours of the day. After about 9 pm I tend to feel quite drowsy and prefer doing lighter activities."},
+          {"question": "Has your routine changed recently?", "sample_answer": "Yes, quite a bit. Since I started working from home, I no longer have to commute, which saves me nearly two hours daily. I've been using that extra time for exercise and cooking healthier meals."},
+          {"question": "What would you like to change about your daily routine?", "sample_answer": "I'd really like to incorporate more exercise into my mornings. At the moment, I sometimes skip my workout when I'm pressed for time, so I'd like to wake up a bit earlier."}
+        ]
+      },
+      {
+        "id": 14, "topic": "Transport",
+        "tips": ["Compare different modes of transport with pros and cons", "Mention environmental aspects to show awareness", "Use conditional structures: 'If there were better bus routes, I would...'"],
+        "vocabulary": [{"word": "congestion", "meaning": "too much traffic causing slow movement"}, {"word": "commute", "meaning": "regular journey between home and work"}, {"word": "sustainable", "meaning": "able to continue without damaging the environment"}, {"word": "infrastructure", "meaning": "basic systems like roads, bridges, railways"}, {"word": "rush hour", "meaning": "the busiest travel time of day"}],
+        "questions": [
+          {"question": "How do you usually get around?", "sample_answer": "For my daily commute, I take the metro because it's the fastest and most reliable option. For shorter distances, I usually walk or ride a bicycle, which is both healthy and sustainable."},
+          {"question": "Do you prefer public or private transport?", "sample_answer": "I generally prefer public transport because it's more environmentally friendly and you don't have to worry about parking. However, for trips to places with poor connectivity, having a private vehicle is far more convenient."},
+          {"question": "Is traffic a problem in your city?", "sample_answer": "Unfortunately, yes. During rush hour, the congestion can be terrible — what should be a twenty-minute drive can easily take over an hour. The government has been trying to improve the infrastructure, but there's a long way to go."},
+          {"question": "Would you like to travel by train more often?", "sample_answer": "Definitely. I find train travel quite relaxing — you can read, work, or simply enjoy the scenery. If there were better rail connections to nearby cities, I would definitely choose trains over driving."}
+        ]
+      },
+      {
+        "id": 15, "topic": "Movies & TV",
+        "tips": ["Name specific films or shows to make your answer concrete", "Explain what draws you to certain genres", "Compare cinema experience with home viewing"],
+        "vocabulary": [{"word": "plot", "meaning": "the main story of a film or book"}, {"word": "gripping", "meaning": "very exciting and holding your attention"}, {"word": "binge-watch", "meaning": "to watch many episodes in one sitting"}, {"word": "cinematography", "meaning": "the art of making visual images for films"}, {"word": "blockbuster", "meaning": "a very successful and popular film"}],
+        "questions": [
+          {"question": "What kind of movies do you enjoy watching?", "sample_answer": "I'm a big fan of thriller and mystery films because I love trying to figure out the plot twists before they happen. I also enjoy well-made documentaries that give deeper understanding of real-world issues."},
+          {"question": "Do you prefer watching films at home or in the cinema?", "sample_answer": "For blockbusters with spectacular effects, I prefer the cinema because the big screen and surround sound create an immersive experience. But for quieter films, I'm perfectly happy watching at home."},
+          {"question": "Who is your favourite actor or actress?", "sample_answer": "I'd say my favourite is Shah Rukh Khan because he has incredible range — he can make you laugh and cry in the same film. His performances always feel genuine and connect with the audience."},
+          {"question": "How often do you watch TV?", "sample_answer": "I probably watch TV series for about an hour most evenings to unwind. I must admit I sometimes binge-watch gripping series on weekends — once I start a good thriller, it's very hard to stop!"}
+        ]
+      },
+      {
+        "id": 16, "topic": "Animals & Pets",
+        "tips": ["Share personal stories about interactions with animals", "Discuss both benefits and responsibilities of pet ownership", "Use descriptive adjectives: 'loyal', 'affectionate', 'playful'"],
+        "vocabulary": [{"word": "loyal", "meaning": "faithful and devoted"}, {"word": "affectionate", "meaning": "showing fondness or love"}, {"word": "domesticated", "meaning": "tamed and kept as a pet"}, {"word": "endangered", "meaning": "at risk of extinction"}, {"word": "nurture", "meaning": "to care for and encourage growth"}],
+        "questions": [
+          {"question": "Do you have any pets?", "sample_answer": "Yes, I have a golden retriever named Rocky. He's incredibly affectionate and loyal — he greets me at the door every time I come home, wagging his tail. Having him has genuinely made my life happier."},
+          {"question": "What is your favourite animal?", "sample_answer": "I've always been fascinated by dolphins because they're remarkably intelligent and social creatures. The way they communicate with each other and enjoy playing is absolutely captivating."},
+          {"question": "Are pets popular in your country?", "sample_answer": "They're becoming increasingly popular, especially in urban areas. Dogs and cats are the most common, and there's a growing trend of people treating their pets almost like family members."},
+          {"question": "Would you like to have a pet in the future?", "sample_answer": "Yes, I'd love to adopt a cat someday. I think having a pet to nurture and care for would be really fulfilling. I'd prefer to adopt from a shelter because there are so many animals that need loving homes."}
+        ]
+      },
+      {
+        "id": 17, "topic": "Clothes & Fashion",
+        "tips": ["Describe your personal style rather than just saying 'casual' or 'formal'", "Discuss how clothing choices vary by occasion", "Use adjectives for fabrics and fits: 'comfortable', 'well-tailored'"],
+        "vocabulary": [{"word": "versatile", "meaning": "suitable for many different purposes"}, {"word": "outfit", "meaning": "a set of clothes worn together"}, {"word": "trendy", "meaning": "fashionable at the current time"}, {"word": "attire", "meaning": "clothes, especially of a particular type"}, {"word": "wardrobe", "meaning": "a person's entire collection of clothes"}],
+        "questions": [
+          {"question": "What kind of clothes do you usually wear?", "sample_answer": "On most days, I opt for smart casual attire — a well-fitted shirt with comfortable trousers. I prefer versatile pieces that look presentable for work but are comfortable for a casual outing."},
+          {"question": "Do you follow fashion trends?", "sample_answer": "Not particularly — I tend to choose classic styles that don't go out of fashion quickly. I keep an eye on trends but only adopt them if they genuinely suit my body type and personal taste."},
+          {"question": "Is fashion important to you?", "sample_answer": "I think looking well-presented is important because it affects how confident you feel. However, I don't believe you need designer labels — what matters more is wearing clothes that fit well and make you comfortable."},
+          {"question": "Has your style changed since you were younger?", "sample_answer": "Significantly, yes. As a teenager, I used to wear very bright, trendy outfits. Now I've gravitated towards a more understated, minimalist wardrobe with neutral colours that's much more practical and sophisticated."}
+        ]
+      },
+      {
+        "id": 18, "topic": "Festivals & Celebrations",
+        "tips": ["Describe the atmosphere and emotions, not just the activities", "Use sensory details: colours, sounds, smells, foods", "Compare how celebrations have changed over time"],
+        "vocabulary": [{"word": "festive", "meaning": "cheerful and related to a celebration"}, {"word": "commemorate", "meaning": "to honour the memory of an event"}, {"word": "vibrant", "meaning": "full of energy, colour, and life"}, {"word": "heritage", "meaning": "traditions passed down from previous generations"}, {"word": "ritual", "meaning": "a ceremony or series of traditional actions"}],
+        "questions": [
+          {"question": "What is the most important festival in your country?", "sample_answer": "Diwali is arguably the most important festival in my country. It's the festival of lights that symbolises the victory of good over evil, and the whole country comes alive with vibrant decorations and a truly festive atmosphere."},
+          {"question": "How do people celebrate it?", "sample_answer": "People clean and decorate their homes with oil lamps and colourful rangoli designs. Families gather to exchange gifts, share traditional sweets, and perform prayer rituals. In the evening, the sky lights up with fireworks."},
+          {"question": "Do you enjoy attending festivals?", "sample_answer": "Absolutely — I look forward to festivals all year round. There's something magical about the sense of community and togetherness that festivals create. The music, food, and joyful atmosphere always lift my spirits."},
+          {"question": "Has the way people celebrate festivals changed over time?", "sample_answer": "Yes, quite noticeably. While people still follow traditional rituals, celebrations have become more commercialised — there's more emphasis on buying gifts and posting on social media. But the core spirit of coming together remains the same."}
+        ]
+      },
+      {
+        "id": 19, "topic": "Neighbours",
+        "tips": ["Give examples of positive or negative neighbour interactions", "Discuss cultural differences in neighbour relationships", "Use phrases like 'get along with', 'keep to themselves'"],
+        "vocabulary": [{"word": "considerate", "meaning": "thoughtful about others' needs"}, {"word": "community", "meaning": "a group of people living in the same area"}, {"word": "privacy", "meaning": "the state of being free from others' attention"}, {"word": "get along", "meaning": "to have a friendly relationship"}, {"word": "boundaries", "meaning": "limits that people set in relationships"}],
+        "questions": [
+          {"question": "Do you know your neighbours well?", "sample_answer": "I know my immediate neighbours reasonably well — we greet each other regularly and have brief chats. The family next door is particularly friendly, and we sometimes share homemade food during festivals."},
+          {"question": "How often do you talk to your neighbours?", "sample_answer": "I'd say I have brief conversations a few times a week — usually when we bump into each other in the hallway or parking area. We mostly talk about everyday things like the weather or local news."},
+          {"question": "Do you think neighbours are important?", "sample_answer": "Definitely. Good neighbours can make a huge difference to your quality of life. They're the first people who can help in an emergency, and having a friendly community creates a sense of belonging and security."},
+          {"question": "What makes a good neighbour?", "sample_answer": "The most important quality is being considerate — respecting others' privacy and keeping noise levels reasonable. A good neighbour is friendly and approachable but also understands boundaries and doesn't interfere in personal matters."}
+        ]
+      },
+      {
+        "id": 20, "topic": "Learning Languages",
+        "tips": ["Share your personal language learning journey with specific examples", "Discuss both challenges and rewards of learning languages", "Mention specific strategies that help you learn"],
+        "vocabulary": [{"word": "fluent", "meaning": "able to speak a language easily and well"}, {"word": "bilingual", "meaning": "able to speak two languages well"}, {"word": "immersion", "meaning": "learning by being surrounded by the language"}, {"word": "pronunciation", "meaning": "the way words are spoken"}, {"word": "mother tongue", "meaning": "the first language you learn as a child"}],
+        "questions": [
+          {"question": "How many languages do you speak?", "sample_answer": "I speak three languages — Hindi is my mother tongue, and I'm fluent in English as well. I also have a basic understanding of French, which I studied for two years in school."},
+          {"question": "Why are you learning English?", "sample_answer": "English is essential for my career goals since most international companies require it. Beyond that, I genuinely enjoy the language — it gives me access to vast knowledge, entertainment, and the ability to communicate worldwide."},
+          {"question": "What is the most difficult thing about learning a language?", "sample_answer": "For me, the hardest part is pronunciation — getting the accent and intonation right feels quite challenging. Grammar rules can be tricky too, especially when your mother tongue has a completely different sentence structure."},
+          {"question": "Would you like to learn another language in the future?", "sample_answer": "Yes, I'd love to learn Japanese someday because I'm fascinated by Japanese culture and anime. I think immersion would be the best way to learn it, so I'd like to visit Japan eventually."}
+        ]
+      }
+    ]
+  },
+  "part3": {
+    "total_topics": 20,
+    "topics": [
+      {
+        "id": 1, "topic": "Education & Learning", "related_categories": ["Education"],
+        "tips": ["Support your opinion with reasons AND a specific example", "Acknowledge the opposing viewpoint before presenting yours", "Use academic vocabulary: 'curriculum', 'pedagogy', 'critical thinking'"],
+        "vocabulary": [{"word": "curriculum", "meaning": "the subjects taught in a school"}, {"word": "pedagogy", "meaning": "the method and practice of teaching"}, {"word": "rote learning", "meaning": "learning by repeating until memorised"}, {"word": "critical thinking", "meaning": "analysing facts to form a judgement"}, {"word": "holistic", "meaning": "considering the whole person, not just one aspect"}],
+        "questions": [
+          {"question": "How has education changed in your country in the last few decades?", "sample_answer": "Education has undergone a remarkable transformation. There's been a significant shift from rote learning towards interactive, skill-based approaches that encourage critical thinking. Technology has also played a major role — smart classrooms and online resources are now commonplace. Additionally, there's growing emphasis on holistic development rather than purely academic achievement, which I think is very positive."},
+          {"question": "Do you think online learning is as effective as classroom learning?", "sample_answer": "Online learning has strengths in terms of flexibility and accessibility — students can learn at their own pace from anywhere. However, it lacks the social interaction and hands-on experience that classroom learning provides. For subjects requiring collaboration, online learning can't fully replace face-to-face teaching. The ideal approach is probably a blended model combining the best of both."},
+          {"question": "Should governments provide free university education?", "sample_answer": "I strongly believe access to higher education shouldn't be limited by financial situation. Government investment in free university education reduces social inequality and strengthens the future workforce. Countries like Germany have demonstrated this model works successfully. That said, a subsidised rather than completely free model could be a practical compromise to ensure adequate funding."},
+          {"question": "What skills should schools focus on teaching young people?", "sample_answer": "Beyond traditional subjects, schools should prioritise critical thinking, financial literacy, and emotional intelligence. In today's rapidly changing world, the ability to analyse information and adapt is far more valuable than memorising facts. Communication skills and teamwork are also essential because virtually every workplace requires collaboration. Schools should prepare students for life, not just examinations."}
+        ]
+      },
+      {
+        "id": 2, "topic": "Environment & Nature", "related_categories": ["Nature", "Travel"],
+        "tips": ["Use conditional sentences: 'If governments invested more in...'", "Mention specific environmental issues with data if possible", "Balance personal responsibility with systemic change arguments"],
+        "vocabulary": [{"word": "sustainability", "meaning": "meeting needs without harming future generations"}, {"word": "carbon footprint", "meaning": "total greenhouse gases caused by a person"}, {"word": "biodiversity", "meaning": "the variety of plant and animal life"}, {"word": "renewable", "meaning": "energy from naturally replenished sources"}, {"word": "deforestation", "meaning": "clearing forests on a large scale"}],
+        "questions": [
+          {"question": "What are the biggest environmental problems in the world today?", "sample_answer": "Climate change is undoubtedly the most pressing crisis, with rising temperatures causing extreme weather events. Deforestation and loss of biodiversity are also critical — we're losing species at an alarming rate. Ocean pollution, particularly plastic waste, is devastating marine ecosystems. All these problems are interconnected and require coordinated global action rather than isolated efforts."},
+          {"question": "Do you think individuals or governments are more responsible for protecting the environment?", "sample_answer": "While both share responsibility, governments have greater capacity for meaningful change through policy. Individual actions like recycling are important but insufficient without systemic changes like investing in renewable energy and regulating industrial emissions. Just 100 companies are responsible for over 70% of global emissions, so individual lifestyle changes alone cannot solve the problem."},
+          {"question": "How can cities be made more environmentally friendly?", "sample_answer": "Investing in efficient public transport would significantly reduce emissions and congestion. Creating more green spaces improves air quality and residents' wellbeing. Cities should also promote cycling infrastructure and pedestrian-friendly zones. Singapore is a great example — they've integrated vertical gardens into their architecture, creating a genuinely green urban environment."},
+          {"question": "Will future generations face worse environmental problems than we do?", "sample_answer": "Unfortunately, they likely will unless we take dramatic action now. Climate change effects are cumulative — today's damage compounds over decades. However, I'm cautiously optimistic because younger generations are far more environmentally conscious and pushing for change. If we accelerate the transition to renewable energy, we might prevent the worst outcomes."}
+        ]
+      },
+      {
+        "id": 3, "topic": "Technology & Society", "related_categories": ["Technology"],
+        "tips": ["Give concrete examples of technology's impact", "Show nuance: technology is neither purely good nor bad", "Reference how different age groups are affected differently"],
+        "vocabulary": [{"word": "automation", "meaning": "use of machines to do work without human help"}, {"word": "digital divide", "meaning": "gap between those with and without technology access"}, {"word": "surveillance", "meaning": "close monitoring of a person or group"}, {"word": "unprecedented", "meaning": "never done or experienced before"}, {"word": "algorithm", "meaning": "a set of rules a computer follows"}],
+        "questions": [
+          {"question": "How has technology changed the way people communicate?", "sample_answer": "Technology has completely revolutionised communication. We can now video call someone on the other side of the world instantly, which was unimaginable thirty years ago. Social media lets us maintain connections with hundreds of people simultaneously. However, while the quantity of communication has increased, the quality and depth of conversations has arguably decreased — many prefer a quick text over meaningful face-to-face conversation."},
+          {"question": "Do you think artificial intelligence will replace human jobs?", "sample_answer": "AI will certainly automate many routine and repetitive jobs — we're seeing this in manufacturing, data entry, and customer service. However, qualities like creativity, empathy, and complex problem-solving can't be replicated by machines. What's more likely is that AI will transform jobs rather than eliminate them, creating new roles we can't yet imagine. The key is investing in education and retraining programmes."},
+          {"question": "What are the disadvantages of being too dependent on technology?", "sample_answer": "One major disadvantage is the erosion of basic skills — many young people can barely read a physical map or do mental arithmetic. There are serious concerns about mental health, as excessive screen time has been linked to anxiety and depression. Privacy is another issue — our personal data is constantly collected and analysed. If technology failed suddenly, many people would struggle to function daily."},
+          {"question": "Should children be allowed to use smartphones from a young age?", "sample_answer": "While some technology exposure is necessary in today's digital world, unrestricted smartphone access can be harmful for young children. Research shows excessive screen time affects attention spans and social development. I think a balanced approach is best — supervised, limited use from around age eight or nine, while ensuring children still spend plenty of time playing outdoors and interacting face-to-face with peers."}
+        ]
+      },
+      {
+        "id": 4, "topic": "Health & Lifestyle", "related_categories": ["Health"],
+        "tips": ["Discuss both physical and mental health aspects", "Use cause-and-effect structures: 'This leads to...', 'As a result...'", "Give examples from your country or community"],
+        "vocabulary": [{"word": "sedentary", "meaning": "involving much sitting and little exercise"}, {"word": "obesity", "meaning": "the condition of being extremely overweight"}, {"word": "well-being", "meaning": "state of being comfortable, healthy, and happy"}, {"word": "preventive", "meaning": "intended to stop something before it happens"}, {"word": "stigma", "meaning": "negative attitudes towards something"}],
+        "questions": [
+          {"question": "Why do you think some people lead unhealthy lifestyles?", "sample_answer": "Many people lead sedentary lifestyles because modern jobs require sitting for eight hours daily, leaving them too exhausted to exercise. Cheap, processed fast food is far quicker than preparing wholesome meals. Stress from work and financial pressures often leads people to seek comfort in unhealthy habits. In many cases, it's not a conscious choice but a consequence of their circumstances."},
+          {"question": "Should governments do more to promote healthy living?", "sample_answer": "Absolutely. Governments should create environments that make healthy choices easier — taxing sugary drinks, investing in public sports facilities, and ensuring affordable access to fresh produce. Preventive healthcare campaigns can make a real difference. Japan's mandatory health check-ups for adults have contributed significantly to their population's longevity."},
+          {"question": "How has the way people think about health changed over the years?", "sample_answer": "There's been a significant shift. Previously, being healthy simply meant not being physically ill, but now people recognise mental well-being is equally important. There's much greater awareness of conditions like anxiety and depression. People are also more proactive — practices like yoga, meditation, and mindful eating have become mainstream rather than alternative."},
+          {"question": "Is it more important to have a healthy body or a healthy mind?", "sample_answer": "I think it's impossible to truly separate the two because they're deeply interconnected. Poor mental health often manifests as physical symptoms — stress causes headaches, insomnia, and weakened immunity. Similarly, chronic physical illness can lead to depression. If I had to choose, I might lean towards mental health because a positive mindset gives you motivation to work on physical health. But ideally, we should strive for both."}
+        ]
+      },
+      {
+        "id": 5, "topic": "Work & Career", "related_categories": ["Work"],
+        "tips": ["Draw on your own experiences or people you know", "Discuss both traditional and modern career perspectives", "Use collocations: 'career progression', 'work-life balance'"],
+        "vocabulary": [{"word": "work-life balance", "meaning": "equal time for work and personal life"}, {"word": "job satisfaction", "meaning": "feeling fulfilled by your work"}, {"word": "freelance", "meaning": "working independently, not for one employer"}, {"word": "entrepreneurship", "meaning": "starting and running your own business"}, {"word": "burnout", "meaning": "exhaustion from prolonged stress at work"}],
+        "questions": [
+          {"question": "What factors are important when choosing a career?", "sample_answer": "Genuine passion for the field is crucial because you'll spend a third of your life working. Financial stability matters too — you need to earn enough to live comfortably. Career progression opportunities are important, and work-life balance has become increasingly valued by younger generations. The ideal career combines all these elements, though most people must prioritise certain factors."},
+          {"question": "Do you think job satisfaction is more important than salary?", "sample_answer": "While a decent salary is necessary for basic needs, job satisfaction matters more long-term. Research shows that beyond a certain income level, additional money doesn't significantly increase happiness. People who dread work every morning, regardless of earnings, often suffer from burnout. Those who find meaning in their work tend to be more motivated and happier, even earning less."},
+          {"question": "How has the nature of work changed in recent years?", "sample_answer": "The pandemic fundamentally transformed work. Remote and hybrid arrangements have become the norm in many industries. The gig economy and freelance work have expanded, with many choosing entrepreneurship over traditional employment. Automation has eliminated some routine jobs while creating new technology roles. Perhaps most significantly, there's growing recognition that work-life balance is a necessity, not a luxury."},
+          {"question": "What challenges do young people face when entering the job market?", "sample_answer": "One of the biggest challenges is the 'experience paradox' — employers want experienced candidates, but you can't gain experience without opportunities. Competition has intensified as more people have university degrees. Entry-level positions often offer low salaries compared to the rising cost of living. Additionally, the rapidly evolving nature of technology means young people need to constantly update their skills."}
+        ]
+      },
+      {
+        "id": 6, "topic": "Culture & Traditions", "related_categories": ["Culture"],
+        "tips": ["Give specific cultural examples from your country", "Discuss the tension between preserving traditions and embracing change", "Use 'on one hand... on the other hand' for balanced views"],
+        "vocabulary": [{"word": "heritage", "meaning": "traditions and culture passed down through generations"}, {"word": "globalisation", "meaning": "increasing worldwide interconnection"}, {"word": "assimilation", "meaning": "absorbing into a wider culture"}, {"word": "indigenous", "meaning": "originating in a particular place; native"}, {"word": "preserve", "meaning": "to keep something in its original state"}],
+        "questions": [
+          {"question": "Why is it important to preserve traditional customs?", "sample_answer": "Traditional customs are the identity of a community — they tell the story of where people come from. Preserving them maintains cultural diversity, which enriches our world like biodiversity enriches nature. These traditions also pass down practical wisdom accumulated over centuries. Without conscious preservation, we risk losing irreplaceable cultural heritage forever."},
+          {"question": "How has globalisation affected local cultures?", "sample_answer": "Globalisation has had a double-edged effect. On one hand, it's created wonderful opportunities for cultural exchange — people can experience music, food, and art from around the world. On the other hand, it's led to cultural assimilation, where local traditions are gradually replaced by homogeneous global culture. In my country, Western fast food chains have become more popular than traditional eateries in many cities."},
+          {"question": "Do young people today value traditions as much as older generations?", "sample_answer": "Young people do value traditions, but differently. They tend to be selective — embracing customs that resonate with modern values while questioning those that seem outdated. Many still enthusiastically celebrate traditional festivals but may reject regressive practices. This isn't disrespectful; it's natural evolution where traditions adapt to remain relevant to each generation."},
+          {"question": "Should governments spend money on protecting cultural heritage?", "sample_answer": "Absolutely, because cultural heritage is non-renewable — once lost, it's gone forever. Government funding is essential for maintaining historical sites, supporting indigenous art forms, and documenting traditions. Moreover, cultural heritage drives tourism, generating significant economic revenue. Countries like Italy have shown that investing in cultural preservation can be both culturally meaningful and economically profitable."}
+        ]
+      },
+      {
+        "id": 7, "topic": "Media & News", "related_categories": ["Technology"],
+        "tips": ["Distinguish between different media types", "Discuss media literacy and verifying information", "Use hedging: 'It could be argued that...', 'To some extent...'"],
+        "vocabulary": [{"word": "credible", "meaning": "able to be believed or trusted"}, {"word": "misinformation", "meaning": "false information spread unintentionally"}, {"word": "bias", "meaning": "unfair preference for or against something"}, {"word": "censorship", "meaning": "suppressing information deemed unacceptable"}, {"word": "objective", "meaning": "not influenced by personal feelings; factual"}],
+        "questions": [
+          {"question": "How reliable do you think the news media is today?", "sample_answer": "Reliability is quite mixed. Established outlets generally maintain high journalistic standards. However, pressure to publish quickly and generate clicks has led many to prioritise sensationalism over accuracy. The proliferation of online sources makes it difficult to distinguish credible journalism from biased reporting. Media literacy has never been more important."},
+          {"question": "Has social media changed the way people get information?", "sample_answer": "Dramatically so. Social media has democratised information — anyone can share news, which has both positive and negative consequences. It allows marginalised voices to be heard and spreads awareness rapidly. The downside is that misinformation spreads equally fast, and algorithms create echo chambers showing people content that confirms existing beliefs."},
+          {"question": "What are the dangers of fake news?", "sample_answer": "Fake news poses serious threats on multiple levels. It can undermine democratic processes by manipulating public opinion. It harms public health — we saw false cures and anti-vaccine theories spread during the pandemic. On a personal level, it erodes trust in institutions and creates deep societal divisions by reinforcing extreme viewpoints."},
+          {"question": "Should there be stricter regulations on what the media can report?", "sample_answer": "This requires a delicate balance between preventing harm and protecting free speech. There should be regulations against deliberately spreading misinformation and hate speech. However, excessive censorship can suppress legitimate criticism. The ideal approach holds media organisations accountable for accuracy while ensuring investigative journalism operates freely. Self-regulation combined with promoting media literacy may be more effective than heavy government control."}
+        ]
+      },
+      {
+        "id": 8, "topic": "Cities & Urbanisation", "related_categories": ["Travel", "Society"],
+        "tips": ["Compare urban and rural life with specific differences", "Discuss push and pull factors of urbanisation", "Use complex sentence structures for grammatical range"],
+        "vocabulary": [{"word": "urbanisation", "meaning": "growth of cities as people move from rural areas"}, {"word": "infrastructure", "meaning": "basic facilities like roads, water, electricity"}, {"word": "overcrowding", "meaning": "too many people in one place"}, {"word": "metropolitan", "meaning": "relating to a large, important city"}, {"word": "gentrification", "meaning": "renovation to attract wealthier residents"}],
+        "questions": [
+          {"question": "Why do so many people move to cities?", "sample_answer": "The primary driver is economic opportunity — cities offer wider employment options and higher salaries. Access to better education and healthcare is another major pull factor. Young people are attracted by social and cultural opportunities. Improved infrastructure and public services make daily life more convenient compared to rural areas."},
+          {"question": "What are the disadvantages of living in a big city?", "sample_answer": "Despite advantages, metropolitan areas come with significant drawbacks. Housing costs can be astronomical. Traffic congestion and long commutes eat into free time and cause stress. Air and noise pollution have serious health consequences. Perhaps most importantly, the fast-paced nature of city life can lead to isolation and mental health issues, despite being surrounded by millions."},
+          {"question": "How can cities improve the quality of life for residents?", "sample_answer": "Investing in efficient public transport reduces congestion and pollution. Creating more green spaces — parks, community gardens — significantly improves mental well-being. Ensuring affordable housing through smart urban planning prevents cities from becoming exclusive enclaves. Cities should also focus on creating walkable neighbourhoods where essential services are within easy reach."},
+          {"question": "Do you think people will continue to move to cities in the future?", "sample_answer": "Urbanisation will likely continue, but the pattern will evolve. Remote work has shown many people can do their jobs from anywhere, which may slow migration to major cities. We might see growth of smaller, more liveable cities. However, certain industries will always cluster in urban centres, so cities will remain important. The challenge is making them more sustainable."}
+        ]
+      },
+      {
+        "id": 9, "topic": "Family & Relationships", "related_categories": ["People"],
+        "tips": ["Compare family structures across generations or cultures", "Discuss both rights and responsibilities within families", "Use 'from my perspective', 'in my experience'"],
+        "vocabulary": [{"word": "nuclear family", "meaning": "parents and their children only"}, {"word": "extended family", "meaning": "relatives beyond parents and children"}, {"word": "generation gap", "meaning": "differences in attitudes between age groups"}, {"word": "upbringing", "meaning": "how a child is raised and educated"}, {"word": "dynamic", "meaning": "a pattern of interaction between people"}],
+        "questions": [
+          {"question": "How have family structures changed in your country?", "sample_answer": "There's been a notable shift from extended families to nuclear units, especially in urban areas. Traditionally, three generations would share a household, but economic migration has made smaller families more common. Marriage ages have increased and family sizes decreased. While this has brought greater individual freedom, some argue it has weakened the traditional family support system."},
+          {"question": "What role should parents play in their children's education?", "sample_answer": "Parents should be actively involved but not overbearing. Creating a supportive home environment that values learning is crucial. However, parents should avoid putting excessive academic pressure on children, as this can cause anxiety. The most important thing is teaching a love of learning and the confidence to ask questions, rather than just pushing for top grades."},
+          {"question": "Do you think the elderly should be cared for by their families or by the state?", "sample_answer": "Ideally, it should be shared responsibility. Families provide emotional support that institutional care often cannot match. However, many modern families have both parents working full-time, making round-the-clock care difficult. The state should ensure quality healthcare and social services while families maintain regular emotional connections. In my culture, caring for ageing parents is considered a moral duty worth preserving."},
+          {"question": "Is it important for families to spend time together regularly?", "sample_answer": "Absolutely. Regular quality time strengthens family bonds and creates security, especially for children. Even simple activities like sharing meals or going for walks make a significant difference. Research shows children from families who regularly spend time together have better emotional well-being. In our busy lives, consciously setting aside family time has become more important than ever."}
+        ]
+      },
+      {
+        "id": 10, "topic": "Crime & Law", "related_categories": ["Society"],
+        "tips": ["Discuss root causes rather than surface-level symptoms", "Consider perspectives of victims, offenders, and society", "Use formal vocabulary: 'rehabilitation', 'deterrent'"],
+        "vocabulary": [{"word": "rehabilitation", "meaning": "helping someone return to a normal life"}, {"word": "deterrent", "meaning": "something that discourages certain behaviour"}, {"word": "recidivism", "meaning": "tendency of criminals to reoffend"}, {"word": "juvenile", "meaning": "a young person, usually under 18"}, {"word": "incarceration", "meaning": "the state of being imprisoned"}],
+        "questions": [
+          {"question": "What are the main causes of crime in society?", "sample_answer": "Crime is typically rooted in socioeconomic factors. Poverty and inequality are the most significant drivers — when people lack basic necessities, some turn to crime out of desperation. Lack of education and employment compounds this. Substance abuse is another major contributor. Additionally, broken family structures and poor upbringing can lead to antisocial behaviour, particularly among juveniles."},
+          {"question": "Do you think harsher punishments reduce crime?", "sample_answer": "Evidence suggests harsher punishments alone aren't an effective deterrent. Countries with severe penalties don't necessarily have lower crime rates. What actually reduces crime is the certainty of being caught, not severity of punishment. A more effective approach combines firm justice with investment in education and rehabilitation. Norway's focus on rehabilitation has resulted in remarkably low recidivism rates."},
+          {"question": "How can communities help prevent crime?", "sample_answer": "Communities play a vital role. Neighbourhood watch programmes create shared responsibility for safety. Youth programmes — sports clubs, mentoring, skills training — give young people positive alternatives. Strong community bonds where neighbours look out for each other naturally deter crime. Creating well-lit, well-maintained public spaces also helps because cared-for environments attract less criminal activity."},
+          {"question": "Is it possible to rehabilitate criminals effectively?", "sample_answer": "I firmly believe it is, though it requires genuine commitment. Effective rehabilitation addresses underlying causes through education, vocational training, therapy, and substance abuse treatment. Scandinavian countries have demonstrated that rehabilitation-focused systems achieve recidivism rates as low as 20%, compared to over 70% in punishment-focused systems. However, this requires significant investment and a society willing to give second chances."}
+        ]
+      },
+      {
+        "id": 11, "topic": "Transport & Infrastructure", "related_categories": ["Travel"],
+        "tips": ["Reference both developed and developing country perspectives", "Discuss environmental impact alongside convenience", "Use hypothetical structures: 'If the government were to invest...'"],
+        "vocabulary": [{"word": "emission", "meaning": "gas released into the atmosphere"}, {"word": "congestion", "meaning": "overcrowding of roads with traffic"}, {"word": "subsidise", "meaning": "support financially to reduce cost"}, {"word": "commuter", "meaning": "person who travels regularly to work"}, {"word": "sustainable", "meaning": "able to maintain without depleting resources"}],
+        "questions": [
+          {"question": "How can public transport be improved in your country?", "sample_answer": "Expanding metro and bus networks to cover underserved areas is key. Services need to be more frequent and reliable. The government should subsidise fares to compete with driving costs. Integrating different transport modes through a single ticketing system, as London has done with Oyster cards, would make the experience much more seamless."},
+          {"question": "Do you think people should drive less? Why?", "sample_answer": "Yes, reducing private car usage is important. Vehicle emissions contribute significantly to pollution and climate change. Traffic congestion wastes enormous productive time and increases stress. If viable alternatives like efficient public transport and safe cycling infrastructure were provided, many people would willingly drive less. The key is making alternatives genuinely convenient."},
+          {"question": "What impact does traffic congestion have on people's lives?", "sample_answer": "The impact is more significant than most realise. Commuters in congested cities can lose two to three hours daily, wasting enormous time over a lifetime. This directly affects work-life balance, leaving less time for family and leisure. The constant stress raises cortisol levels linked to heart disease. Businesses also lose billions in productivity annually."},
+          {"question": "Will electric vehicles solve transport-related pollution?", "sample_answer": "Electric vehicles will help reduce tailpipe emissions, but they're not a complete solution. The electricity used for charging often comes from fossil fuel plants, merely relocating pollution. Battery production and disposal raises environmental concerns. Electric cars don't solve congestion or space issues. A truly sustainable future requires combining EVs with excellent public transport, cycling infrastructure, and smart urban planning."}
+        ]
+      },
+      {
+        "id": 12, "topic": "Tourism & Travel", "related_categories": ["Travel"],
+        "tips": ["Discuss both economic benefits and environmental costs", "Give examples of specific destinations and their challenges", "Use concession phrases: 'While tourism brings revenue...'"],
+        "vocabulary": [{"word": "sustainable tourism", "meaning": "tourism that minimises negative impact"}, {"word": "overtourism", "meaning": "excessive visitors damaging a destination"}, {"word": "ecotourism", "meaning": "responsible travel to natural areas"}, {"word": "heritage site", "meaning": "place of cultural or historical importance"}, {"word": "authentic", "meaning": "genuine and true to its origins"}],
+        "questions": [
+          {"question": "What are the advantages and disadvantages of tourism for a country?", "sample_answer": "Tourism creates jobs, generates foreign exchange, and supports local businesses. It promotes cultural exchange between nations. However, overtourism can damage natural environments and historical sites. Popular destinations like Venice have experienced rising housing costs and loss of authentic character. The environmental impact of mass tourism is also a growing concern."},
+          {"question": "How has international travel changed in recent years?", "sample_answer": "Travel has become far more accessible due to budget airlines and online booking platforms. There's been a shift towards experiential travel — people seek authentic cultural immersion rather than just landmarks. Social media has both inspired exploration and contributed to overtourism at photogenic locations. There's also accelerated interest in sustainable tourism and off-the-beaten-path destinations."},
+          {"question": "Should there be limits on the number of tourists visiting popular sites?", "sample_answer": "Some visitor management is necessary for vulnerable sites. Places like Machu Picchu have already implemented daily caps, helping preserve these treasures for future generations. Without limits, foot traffic and pollution can cause irreversible damage. However, limits must be fair and not make sites accessible only to the wealthy. A timed-entry booking system seems like a practical compromise."},
+          {"question": "Do you think tourism helps people understand other cultures?", "sample_answer": "It depends on how people travel. Those who learn about local customs, try authentic cuisine, and interact with residents genuinely gain cultural understanding. However, tourists who stay in international hotels and eat at familiar chains gain very little insight. Ecotourism and community-based tourism are much more effective at fostering genuine cross-cultural understanding."}
+        ]
+      },
+      {
+        "id": 13, "topic": "Money & Economy", "related_categories": ["Work"],
+        "tips": ["Use economic vocabulary naturally: 'inflation', 'income disparity'", "Discuss individual vs societal perspectives", "Support opinions with reasoning, not just feelings"],
+        "vocabulary": [{"word": "disparity", "meaning": "a great difference or inequality"}, {"word": "inflation", "meaning": "general increase in prices over time"}, {"word": "financial literacy", "meaning": "understanding of financial concepts"}, {"word": "materialism", "meaning": "valuing possessions over other things"}, {"word": "fiscal", "meaning": "relating to government revenue and spending"}],
+        "questions": [
+          {"question": "Do you think money can buy happiness?", "sample_answer": "Money can buy comfort and security, which are prerequisites for happiness. Research suggests up to a certain income level, money does improve well-being. Beyond that threshold, the correlation diminishes rapidly. What truly contributes to lasting happiness are meaningful relationships, a sense of purpose, and good health — none of which can be purchased. Materialism creates an endless cycle of wanting more."},
+          {"question": "How important is it to save money?", "sample_answer": "Saving is absolutely essential, though increasingly challenging due to inflation. Financial savings provide a crucial safety net for unexpected situations like medical emergencies or job loss. It also gives freedom to make important life decisions without financial constraints. However, I believe in balance — being excessively frugal and never enjoying life isn't healthy either."},
+          {"question": "Should schools teach children about financial management?", "sample_answer": "Absolutely — I'm surprised it isn't standard curriculum everywhere. Financial literacy affects virtually every aspect of adult life. Many young adults make poor decisions simply because nobody taught them budgeting, saving, and understanding interest rates. Schools could introduce age-appropriate financial education from primary level and progress to investing and tax in secondary school."},
+          {"question": "What are the effects of a widening gap between the rich and the poor?", "sample_answer": "Income disparity limits social mobility, meaning children born into poverty have far fewer opportunities regardless of talent. This creates frustration that can lead to social unrest and increased crime. Health outcomes are significantly worse in unequal societies. Economically, extreme inequality actually hinders growth because it reduces overall consumer spending. Addressing this through progressive taxation and quality public education should be a priority."}
+        ]
+      },
+      {
+        "id": 14, "topic": "Gender & Equality", "related_categories": ["Society", "People"],
+        "tips": ["Acknowledge progress while discussing remaining challenges", "Use specific examples where possible", "Avoid stereotypes — present nuanced perspectives"],
+        "vocabulary": [{"word": "empowerment", "meaning": "giving someone authority and confidence"}, {"word": "stereotype", "meaning": "a widely held oversimplified belief"}, {"word": "discrimination", "meaning": "unfair treatment based on group identity"}, {"word": "representation", "meaning": "being present and visible in a group"}, {"word": "equity", "meaning": "fairness in treatment according to needs"}],
+        "questions": [
+          {"question": "Do you think men and women have equal opportunities in your country?", "sample_answer": "While significant progress has been made, true equality hasn't been achieved. Women now have greater access to education and more career options than ever. However, disparities persist in areas like salary — women often earn less for equivalent work. Leadership positions are still disproportionately held by men. In rural areas, traditional attitudes continue to limit women's opportunities."},
+          {"question": "Why are some professions still dominated by one gender?", "sample_answer": "This is largely due to deeply ingrained stereotypes about 'male' and 'female' work. From childhood, boys and girls are subtly steered towards different interests. Workplace culture in male-dominated fields can be unwelcoming to women, creating a self-perpetuating cycle. Changing this requires addressing stereotypes in education, implementing inclusive policies, and providing visible role models."},
+          {"question": "How has the role of women in society changed over time?", "sample_answer": "The transformation has been remarkable. A few generations ago, women's roles were largely confined to the domestic sphere. Today, women lead corporations, serve as heads of state, and excel in science and technology. Access to education has been the biggest driver, along with legal reforms. The empowerment of women has had overwhelmingly positive effects — educated women have healthier families and contribute more to the economy."},
+          {"question": "What more can be done to achieve gender equality?", "sample_answer": "Ensuring equal pay through transparent salary policies is fundamental. Providing affordable childcare and generous parental leave for both parents would address career penalties affecting women. Education should actively challenge gender stereotypes. Greater representation of women in leadership inspires the next generation. Ultimately, true equality requires changing cultural attitudes, which is gradual but essential."}
+        ]
+      },
+      {
+        "id": 15, "topic": "Art & Creativity", "related_categories": ["Arts", "Culture"],
+        "tips": ["Give examples of specific art forms from your culture", "Discuss both traditional and modern art forms", "Connect art to broader social and emotional benefits"],
+        "vocabulary": [{"word": "aesthetics", "meaning": "appreciation of beauty"}, {"word": "innate", "meaning": "inborn; natural rather than learned"}, {"word": "patronage", "meaning": "financial support for artists"}, {"word": "expression", "meaning": "conveying thoughts and feelings through art"}, {"word": "innovation", "meaning": "introducing new ideas or methods"}],
+        "questions": [
+          {"question": "Why is art important in society?", "sample_answer": "Art is a powerful form of expression that communicates complex emotions words alone cannot capture. It challenges us to think differently and see new perspectives. Historically, art has catalysed social change through protest music, political satire, and documentary photography. Engaging with art reduces stress, improves mental health, and fosters empathy. A society without art would be functional but profoundly impoverished."},
+          {"question": "Do you think creativity can be taught?", "sample_answer": "While some people have natural inclinations towards creative thinking, creativity is absolutely a skill that can be nurtured. Education systems that encourage experimentation and tolerate failure produce more creative individuals. The problem is many traditional systems reward conformity and penalise mistakes, stifling innate creativity. Exposing children to diverse experiences and giving them freedom to explore cultivates creativity."},
+          {"question": "Should governments fund the arts?", "sample_answer": "Yes, government patronage is essential because markets alone cannot sustain all valuable art forms. Commercial viability shouldn't be the only measure of art's worth. Government support ensures art is accessible to everyone, not just the wealthy. Free museums, public art installations, and subsidised theatre enrich entire communities. The investment pays for itself through tourism and the broader social benefits of a culturally engaged population."},
+          {"question": "How has technology affected the way people create and enjoy art?", "sample_answer": "Technology has democratised both creation and consumption of art. Digital tools let anyone with a smartphone create music, photography, or digital art. Platforms like YouTube give artists direct access to global audiences, bypassing traditional gatekeepers. However, the abundance of content has arguably devalued individual works. The rise of AI-generated art has also sparked debates about what constitutes authentic creative expression."}
+        ]
+      },
+      {
+        "id": 16, "topic": "Food & Agriculture", "related_categories": ["Food"],
+        "tips": ["Discuss the food chain from production to consumption", "Connect food choices to health, environment, and culture", "Use cause-effect language: 'This has led to...', 'Consequently...'"],
+        "vocabulary": [{"word": "organic", "meaning": "produced without artificial chemicals"}, {"word": "processed", "meaning": "food altered from its natural state"}, {"word": "nutrition", "meaning": "getting food needed for health"}, {"word": "food security", "meaning": "reliable access to sufficient nutritious food"}, {"word": "pesticide", "meaning": "chemical used to kill insects on crops"}],
+        "questions": [
+          {"question": "How has the way people eat changed in recent years?", "sample_answer": "The most significant change is the rise of convenience and fast food — people cook less and rely more on processed meals and delivery apps. Positively, there's growing awareness about nutrition, with more people adopting plant-based diets. International cuisines have become widely accessible. However, modern life has led to more rushed, distracted eating rather than the traditional communal meals many cultures valued."},
+          {"question": "Do you think organic food is worth the extra cost?", "sample_answer": "Organic food is produced without synthetic pesticides, which is beneficial. However, the nutritional difference from conventional produce is minimal. A practical approach is buying organic for items with high pesticide residues, like berries and leafy greens, while choosing conventional for produce with thick skins. Making organic food more affordable through government subsidies would make it realistic for everyone."},
+          {"question": "What are the effects of fast food on people's health?", "sample_answer": "The health consequences are well-documented and concerning. Fast food is typically high in calories, saturated fats, sugar, and sodium while low in essential nutrients. Regular consumption is linked to obesity, diabetes, cardiovascular disease, and depression. The problem is compounded by aggressive marketing and the addictive combination of sugar, salt, and fat these foods are engineered to contain."},
+          {"question": "Should governments regulate the food industry more strictly?", "sample_answer": "Some increased regulation is necessary for public health. Mandatory clear nutritional labelling, restrictions on marketing unhealthy food to children, and limits on harmful additives are reasonable. Sugar taxes have shown promising results. However, regulations should be balanced — being too restrictive could harm small businesses. The most effective approach combines regulation with education."}
+        ]
+      },
+      {
+        "id": 17, "topic": "Ageing & Elderly", "related_categories": ["People", "Society"],
+        "tips": ["Show respect for older people while discussing challenges honestly", "Compare how different cultures treat their elderly", "Discuss both challenges and contributions of older people"],
+        "vocabulary": [{"word": "longevity", "meaning": "long life or length of life"}, {"word": "pension", "meaning": "regular payment to retired people"}, {"word": "ageism", "meaning": "discrimination based on age"}, {"word": "dementia", "meaning": "decline in mental ability affecting daily life"}, {"word": "intergenerational", "meaning": "between different age groups"}],
+        "questions": [
+          {"question": "How should society support its ageing population?", "sample_answer": "Governments should ensure adequate pension systems so retirement doesn't mean poverty. Accessible healthcare, including specialised geriatric care, is essential. Social isolation is a major problem, so community programmes and intergenerational activities help maintain connections. Physical environments should be age-friendly through better transport and accessible buildings. The principle should be enabling older people to live with dignity and independence."},
+          {"question": "Do older people have an important role to play in modern society?", "sample_answer": "Absolutely. Older people possess invaluable experience and wisdom. In professional settings, experienced mentors guide younger employees. Many grandparents play crucial childcare roles. Culturally, elderly people are keepers of traditions that might otherwise be lost. Unfortunately, ageism undervalues these contributions. Countries like Japan, which deeply respect their elderly, demonstrate how intergenerational knowledge transfer strengthens society."},
+          {"question": "What challenges do elderly people face in your country?", "sample_answer": "Healthcare can be expensive and inaccessible, especially without adequate pensions. Social isolation is increasingly common as younger family members migrate to cities. Many struggle with technology that's becoming essential for banking and government services. Ageism in the workplace means those wanting to continue working face discrimination. The lack of purpose after retirement can lead to depression."},
+          {"question": "Is retirement a good thing or should people work as long as they can?", "sample_answer": "It depends entirely on the individual. For physically demanding jobs, retirement is necessary — bodies simply cannot sustain that work indefinitely. However, for those finding purpose in their work, forced retirement at an arbitrary age can be detrimental to mental health. The ideal system offers flexibility — allowing people to gradually reduce hours rather than stopping abruptly."}
+        ]
+      },
+      {
+        "id": 18, "topic": "Sports & Competition", "related_categories": ["Sports"],
+        "tips": ["Discuss psychological aspects of competition, not just physical", "Consider amateur and professional perspectives", "Use comparative structures: 'far more... than', 'significantly greater'"],
+        "vocabulary": [{"word": "sportsmanship", "meaning": "fair and generous behaviour in sport"}, {"word": "commercialisation", "meaning": "managing something to make profit"}, {"word": "endorse", "meaning": "to publicly support a product"}, {"word": "resilience", "meaning": "ability to recover from difficulties"}, {"word": "grassroots", "meaning": "relating to ordinary people, not leaders"}],
+        "questions": [
+          {"question": "Why do people enjoy watching competitive sports?", "sample_answer": "The appeal is deeply rooted in psychology. There's the thrill of uncertainty — not knowing who will win creates genuine excitement. People form emotional connections with teams, experiencing shared joy in victories. Sports provide community and belonging — supporting a team with thousands creates a powerful bond. The displays of extraordinary ability and resilience are genuinely inspiring."},
+          {"question": "Should professional athletes earn as much as they do?", "sample_answer": "This is complex. Top athletes dedicate their lives to their sport and have relatively short careers, so significant earnings seem justified. Their salaries are driven by market forces — they generate enormous revenue. However, when footballers earn more weekly than teachers earn yearly, it raises questions about society's values. The real issue isn't athlete salaries but rather underfunding of professions that arguably contribute more to society."},
+          {"question": "What are the benefits of competitive sports for young people?", "sample_answer": "Competitive sports offer far more than physical fitness. They teach invaluable life skills — teamwork, discipline, time management, and handling both success and failure. Learning to lose with dignity and win with humility builds emotional resilience. Sports promote sportsmanship and respect for rules. For disadvantaged young people, grassroots programmes provide structure, mentorship, and positive alternatives."},
+          {"question": "Do you think there is too much commercialisation in sports today?", "sample_answer": "I do think it's gone too far. Sponsorship money and broadcasting deals have fundamentally changed sports, often prioritising profit over fans. Matches are scheduled to suit television in different countries. Athletes are pressured to endorse products. While commercial investment has brought better facilities, it's made many sports less accessible through expensive tickets and pay-per-view broadcasting. Better balance is needed between commercial interests and the spirit of sport."}
+        ]
+      },
+      {
+        "id": 19, "topic": "Housing & Living Spaces", "related_categories": ["Travel"],
+        "tips": ["Discuss housing from personal, social, and economic angles", "Compare urban vs rural housing", "Use formal language for policy discussions"],
+        "vocabulary": [{"word": "affordable", "meaning": "reasonably priced; within financial reach"}, {"word": "mortgage", "meaning": "a loan used to buy property"}, {"word": "tenant", "meaning": "a person who rents a property"}, {"word": "zoning", "meaning": "dividing land into areas for different uses"}, {"word": "sustainable", "meaning": "designed to minimise environmental impact"}],
+        "questions": [
+          {"question": "Why is housing becoming more expensive in many countries?", "sample_answer": "Rapid urbanisation has created enormous demand while supply hasn't kept pace. Property investment has turned housing into a speculative asset rather than basic need. Low interest rates increased demand, pushing prices higher. Restrictive zoning laws limit new construction. The result is that homeownership has become an impossible dream for many young people."},
+          {"question": "Should governments provide more affordable housing?", "sample_answer": "Housing is a fundamental need, not a luxury, and governments have a responsibility to ensure access to decent accommodation. This can be achieved through social housing, subsidies for first-time buyers, and rent control. Singapore's public housing programme is an excellent model — over 80% of residents live in government-built flats. Without intervention, market forces will continue to price out lower-income families."},
+          {"question": "Do you think the design of homes affects people's wellbeing?", "sample_answer": "Research strongly supports this idea. Natural light, adequate space, and access to green views reduce stress and improve mood. Conversely, cramped, poorly ventilated housing contributes to depression and anxiety. Communal areas that encourage neighbour interaction foster community. Architects should prioritise wellbeing rather than focusing solely on maximising the number of units."},
+          {"question": "Will more people live in apartments rather than houses in the future?", "sample_answer": "Given urbanisation and land scarcity trends, apartment living will become more common, particularly in cities. High-rise living is the most practical solution for housing large populations efficiently. However, houses won't disappear — many aspire to gardens and private space, especially families. The challenge is designing apartments offering comparable quality of life with adequate space, sound insulation, and communal green areas."}
+        ]
+      },
+      {
+        "id": 20, "topic": "Globalisation", "related_categories": ["Society", "Culture"],
+        "tips": ["Present both winners and losers of globalisation", "Use specific examples of countries or industries", "Acknowledge complexity in your analysis"],
+        "vocabulary": [{"word": "interdependent", "meaning": "mutually reliant on each other"}, {"word": "outsourcing", "meaning": "hiring external companies to do work"}, {"word": "homogeneity", "meaning": "being all the same; lacking diversity"}, {"word": "exploitation", "meaning": "unfair treatment for someone's benefit"}, {"word": "multinational", "meaning": "a company operating in several countries"}],
+        "questions": [
+          {"question": "What are the main advantages and disadvantages of globalisation?", "sample_answer": "Globalisation has lifted millions out of poverty by creating economic opportunities and made goods more affordable through trade. Cultural exchange has enriched understanding between societies. However, wealth has been distributed unevenly, often benefiting multinationals more than local communities. Local industries have been destroyed by foreign competition. The environmental cost of increased international shipping has been substantial."},
+          {"question": "How has globalisation affected small businesses?", "sample_answer": "The impact is double-edged. The internet and e-commerce have given small businesses access to global markets previously unreachable — a craftsperson in rural India can sell worldwide. On the other hand, small businesses face intense competition from multinationals with economies of scale. Local shops struggle against global retail chains. The key to survival lies in offering unique, high-quality products that large corporations cannot replicate."},
+          {"question": "Do you think globalisation leads to cultural homogeneity?", "sample_answer": "There's certainly evidence of convergence — you find the same fast food chains and clothing brands worldwide. This is visible among younger generations consuming the same global media. However, globalisation has also sparked renewed appreciation for local traditions as communities seek to preserve their identity. What we're witnessing is more cultural hybridisation — local traditions absorbing global influences rather than being completely replaced."},
+          {"question": "What impact does globalisation have on developing countries?", "sample_answer": "It's deeply complex. Globalisation has created millions of jobs, contributing to poverty reduction in countries like China, India, and Vietnam. Access to markets and technology has accelerated development. However, this growth often comes at a cost — environmental degradation, worker exploitation, and growing inequality. Many developing nations remain dependent on exporting raw materials while importing expensive finished goods. For globalisation to truly benefit these countries, there need to be fairer trade agreements."}
+        ]
+      }
+    ]
+  }
+}

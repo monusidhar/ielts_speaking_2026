@@ -376,9 +376,27 @@ class _HomeScreenState extends State<HomeScreen>
         Row(children: [
           Expanded(
               child: _ActionButton(
-            label: 'Random Practice',
-            icon: Icons.shuffle_rounded,
+            label: 'Part 1 Practice',
+            icon: Icons.chat_bubble_outline_rounded,
+            colors: [const Color(0xFF0288D1), const Color(0xFF03A9F4)],
+            onTap: () => Navigator.pushNamed(context, '/part1-topics'),
+          )),
+          const SizedBox(width: 12),
+          Expanded(
+              child: _ActionButton(
+            label: 'Part 3 Practice',
+            icon: Icons.forum_outlined,
             colors: [const Color(0xFF6A1B9A), const Color(0xFF8E24AA)],
+            onTap: () => Navigator.pushNamed(context, '/part3-topics'),
+          )),
+        ]),
+        const SizedBox(height: 12),
+        Row(children: [
+          Expanded(
+              child: _ActionButton(
+            label: 'Part 2 Cue Cards',
+            icon: Icons.shuffle_rounded,
+            colors: [const Color(0xFF2E7D32), const Color(0xFF43A047)],
             onTap: () => Navigator.pushNamed(context, '/random-practice'),
           )),
           const SizedBox(width: 12),
@@ -556,6 +574,7 @@ class _HomeScreenState extends State<HomeScreen>
           crossAxisCount: 3,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.zero,
           crossAxisSpacing: 10,
           mainAxisSpacing: 10,
           childAspectRatio: 1.05,

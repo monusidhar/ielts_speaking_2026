@@ -1,7 +1,7 @@
 # IELTS Speaking 2026 — Full App Context
 
 > **Use this file** to give any AI assistant full context about this project.
-> Last updated: 16 May 2026
+> Last updated: 17 May 2026
 
 ---
 
@@ -37,7 +37,8 @@ lib/
 │   ├── repositories/
 │   │   ├── prefs_repository.dart      # SharedPreferences wrapper
 │   │   ├── cue_card_repository.dart   # Loads/serves cue card data
-│   │   └── practice_history_repository.dart  # AI practice session history
+│   │   ├── practice_history_repository.dart  # AI practice session history
+│   │   └── speaking_question_repository.dart # Part 1 & 3 question topics
 │   └── services/
 │       ├── ad_service.dart            # AdMob banner/interstitial/rewarded
 │       ├── ai_service.dart            # Groq API for AI feedback (cue card practice)
@@ -64,6 +65,9 @@ lib/
 │   │   ├── mock_interview_intro_screen.dart  # Format explainer + credit check
 │   │   ├── mock_interview_screen.dart       # Full interview flow (Part 1→2→3)
 │   │   └── mock_interview_result_screen.dart # Band scores + per-part feedback + premium upsell
+│   ├── speaking_practice/
+│   │   ├── speaking_topics_screen.dart      # Part 1 or Part 3 topic list (reusable)
+│   │   └── speaking_practice_screen.dart    # Timed Part 1/3 practice (no AI)
 │   ├── daily_question/
 │   │   └── daily_question_practice_screen.dart # Daily AI question practice (speak → AI score)
 │   ├── premium/premium_screen.dart    # Purchase/restore premium
@@ -74,6 +78,7 @@ lib/
 
 assets/
 ├── data/cue_cards.json                # 50 cue cards with vocab & tips
+├── data/speaking_questions.json       # Part 1 (20 topics) & Part 3 (20 topics) — v2.0.0 with sample answers, tips, vocab
 └── images/                            # App images
 ```
 
@@ -100,6 +105,9 @@ assets/
 | `AppRoutes.mockInterview` | `/mock-interview` | `MockInterviewScreen` | — |
 | `AppRoutes.mockInterviewResult` | `/mock-interview-result` | `MockInterviewResultScreen` | `{'result': MockInterviewResult, 'card': CueCard}` |
 | `AppRoutes.dailyQuestionPractice` | `/daily-question-practice` | `DailyQuestionPracticeScreen` | `{'question': String, 'partType': String}` |
+| `AppRoutes.part1Topics` | `/part1-topics` | `SpeakingTopicsScreen(partLabel: 'Part 1')` | — |
+| `AppRoutes.part3Topics` | `/part3-topics` | `SpeakingTopicsScreen(partLabel: 'Part 3')` | — |
+| `AppRoutes.speakingPractice` | `/speaking-practice` | `SpeakingPracticeScreen` | `{'topic': SpeakingTopic, 'partLabel': String}` |
 
 Routes are defined in `main.dart`. Simple routes use `routes:` map; `cueCardDetail`, `aiFeedback`, `mockInterviewResult`, and `dailyQuestionPractice` use `onGenerateRoute`.
 
@@ -256,6 +264,8 @@ class MockInterviewResult {
 | `review_prompted` | `bool` | Whether in-app review has been shown |
 | `total_ai_sessions` | `int` | Lifetime AI session count (for review trigger) |
 | `notifications_enabled` | `bool` | Whether daily reminders are on (default: true) |
+| `part1_practiced_ids` | `List<String>` | IDs of Part 1 topics user has practiced |
+| `part3_practiced_ids` | `List<String>` | IDs of Part 3 topics user has practiced |
 
 ---
 
@@ -265,7 +275,9 @@ class MockInterviewResult {
 |---------|------|---------|
 | Cue cards | First 50 (`id <= 50`) | All cards |
 | Vocabulary | From first 50 cards only | All vocabulary |
-| Random practice | Random from first 50 | Random from all |
+| Random practice (Part 2) | Random from first 50 | Random from all |
+| **Part 1 Practice** | **All 20 topics (80 questions)** | **Same** |
+| **Part 3 Practice** | **All 20 topics (80 questions)** | **Same** |
 | AI Speaking Coach (cue card) | 5 uses/day | 15 uses/day |
 | **Full Mock Interview** | **1 lifetime trial** | **5/day** |
 | **Daily AI Question** | **View question + practice (uses AI daily quota)** | **Same** |
@@ -283,8 +295,8 @@ class MockInterviewResult {
 
 | Ad Type | Where | Trigger |
 |---------|-------|---------|
-| **Banner** | Bottom of cue card list, cue card detail, mock interview intro, mock interview result, daily question practice | Always visible (free users) |
-| **Interstitial** | After random practice | Every 3 practices (`_interstitialFrequency = 3`) |
+| **Banner** | Bottom of cue card list, cue card detail, mock interview intro, mock interview result, daily question practice, Part 1 topics list, Part 3 topics list, Part 1/3 practice | Always visible (free users) |
+| **Interstitial** | After random practice, after Part 1/3 practice | Every 3 practices (`_interstitialFrequency = 3`) |
 | **Rewarded/Video** | After AI cue card practice, after mock interview completes (before results), after daily question practice | After completing AI evaluation |
 
 All ads auto-hidden when `isPremium == true`. Uses `google_mobile_ads` + `gma_mediation_unity`.
@@ -711,3 +723,125 @@ Analyzes practice history to identify the user's weakest IELTS criterion and sho
 
 ### No API Calls
 Purely local computation from existing practice history data — zero API cost.
+
+---
+
+## 26. Part 1 & Part 3 Practice (Non-AI)
+
+### Overview
+Timed speaking practice for IELTS Part 1 (short answers) and Part 3 (discussion) questions. No AI evaluation — just timed practice similar to how random cue card practice works for Part 2.
+
+### Question Bank (`assets/data/speaking_questions.json` — v2.0.0)
+- **Part 1:** 20 topics × 4 questions = 80 questions (with Band 7+ sample answers, tips, vocabulary)
+- **Part 3:** 20 topics × 4 questions = 80 questions (with Band 7+ sample answers, tips, vocabulary, related_categories)
+- **Sample answers:** Part 1 = 2-3 sentences, Part 3 = 4-6 sentences with reasoning/examples
+- **Tips:** 3 per topic — actionable speaking strategies
+- **Vocabulary:** 5 words per topic with meanings
+- **Related categories:** Part 3 only — maps to cue card categories (e.g. "Education", "Travel")
+- Topics cover: Home, Work, Hobbies, Food, Weather, Travel, Music, Reading, Sports, Technology, Friends, Shopping, Daily Routine, Transport, Movies, Animals, Clothes, Festivals, Neighbours, Languages (Part 1) and Education, Environment, Technology & Society, Health, Work & Career, Culture, Media, Cities, Family, Crime, Transport, Tourism, Money, Gender, Art, Food & Agriculture, Ageing, Sports, Housing, Globalisation (Part 3)
+
+### JSON Structure (v2.0.0)
+```json
+{
+  "version": "2.0.0",
+  "part1": {
+    "total_topics": 20,
+    "topics": [{
+      "id": 1,
+      "topic": "Home & Accommodation",
+      "tips": ["Describe your home using specific adjectives", ...],
+      "vocabulary": [{"word": "spacious", "meaning": "large and roomy"}, ...],
+      "questions": [{"question": "Do you live in a house?", "sample_answer": "I currently live in..."}, ...]
+    }]
+  },
+  "part3": {
+    "total_topics": 20,
+    "topics": [{
+      "id": 1,
+      "topic": "Education & Learning",
+      "related_categories": ["Education"],
+      "tips": [...],
+      "vocabulary": [...],
+      "questions": [{"question": "How has education changed?", "sample_answer": "Education has undergone..."}, ...]
+    }]
+  }
+}
+```
+
+### Data Models (`speaking_question_repository.dart`)
+```dart
+class SpeakingQuestion {
+  String question;
+  String sampleAnswer;
+}
+
+class VocabularyItem {
+  String word;
+  String meaning;
+}
+
+class SpeakingTopic {
+  int id;
+  String topic;
+  List<SpeakingQuestion> questions;
+  List<String> tips;
+  List<VocabularyItem> vocabulary;
+  List<String>? relatedCategories;  // Part 3 only
+  List<String> get questionTexts;   // Convenience: question strings only
+}
+```
+
+### Repository (`speaking_question_repository.dart`)
+- Loads from bundled JSON (lazy, cached)
+- Methods: `getPart1Topics()`, `getPart3Topics()`, `getRandomPart1()`, `getRandomPart3()`
+
+### Practice Tracking (`prefs_repository.dart`)
+- `part1_practiced_ids` / `part3_practiced_ids` — `Set<int>` of topic IDs user has completed
+- Methods: `getPart1PracticedIds()`, `markPart1Practiced(int)`, `getPart3PracticedIds()`, `markPart3Practiced(int)`
+- Marked automatically when user finishes practice
+
+### Screens
+
+#### SpeakingTopicsScreen (`speaking_topics_screen.dart`)
+- Reusable for both Part 1 and Part 3 (takes `partLabel` parameter)
+- Searchable topic list with question count per topic
+- **Green checkmark (✓) badge** on topics user has already practiced
+- Refreshes practiced state on return from practice screen
+- Colour-coded: Part 1 = blue (#0288D1), Part 3 = purple (#6A1B9A)
+- Banner ad at bottom
+
+#### SpeakingPracticeScreen (`speaking_practice_screen.dart`)
+- Phases: `idle` → `speaking` → `finished`
+- Timer: 30 seconds per question (Part 1), 45 seconds per question (Part 3)
+- Auto-advances to next question when timer ends
+- Skip button to manually advance
+- **Finished state shows all questions with Band 7+ model answers** (green box with star icon)
+- **"Practice with AI" button** → navigates to `/daily-question-practice` with first question + partType
+- Practice Again + Back to Topics buttons
+- Marks topic as practiced on finish (`markPart1Practiced` / `markPart3Practiced`)
+- Streak tracking: calls `recordStreakToday()` on finish
+- Ads: banner ad at bottom + interstitial every 3 practices
+- AI practice button uses existing daily AI quota via rewarded video flow
+
+### Routes
+| Route | Path | Screen |
+|-------|------|--------|
+| `part1Topics` | `/part1-topics` | `SpeakingTopicsScreen(partLabel: 'Part 1')` |
+| `part3Topics` | `/part3-topics` | `SpeakingTopicsScreen(partLabel: 'Part 3')` |
+| `speakingPractice` | `/speaking-practice` | `SpeakingPracticeScreen` |
+
+### Home Screen Integration
+- Quick Actions section: 2×2 grid
+  - Row 1: "Part 1 Practice" (blue) + "Part 3 Practice" (purple)
+  - Row 2: "Part 2 Cue Cards" (green) + "All Cue Cards" (blue)
+- All three parts now have dedicated practice buttons
+
+### Timing Constants
+| Constant | Value | Purpose |
+|----------|-------|---------|
+| `kPart1SecsPerQ` | 30 | Seconds per Part 1 question |
+| `kPart3SecsPerQ` | 45 | Seconds per Part 3 question |
+
+### API Cost
+Zero for timed practice — fully local, offline-capable.
+AI evaluation (via "Practice with AI" button) uses existing daily AI quota (5 free / 15 premium per day).

@@ -25,7 +25,10 @@ import 'screens/mock_interview/mock_interview_intro_screen.dart';
 import 'screens/mock_interview/mock_interview_screen.dart';
 import 'screens/mock_interview/mock_interview_result_screen.dart';
 import 'screens/daily_question/daily_question_practice_screen.dart';
+import 'screens/speaking_practice/speaking_topics_screen.dart';
+import 'screens/speaking_practice/speaking_practice_screen.dart';
 import 'data/models/mock_interview_models.dart';
+import 'data/repositories/speaking_question_repository.dart';
 import 'data/repositories/practice_history_repository.dart';
 import 'data/repositories/cue_card_repository.dart';
 import 'data/services/ai_service.dart';
@@ -334,6 +337,10 @@ class _IELTSSpeakingAppState extends State<IELTSSpeakingApp> {
         AppRoutes.practiceHistory: (ctx) => const PracticeHistoryScreen(),
         AppRoutes.mockInterviewIntro: (ctx) => const MockInterviewIntroScreen(),
         AppRoutes.mockInterview: (ctx) => const MockInterviewScreen(),
+        AppRoutes.part1Topics: (ctx) =>
+            const SpeakingTopicsScreen(partLabel: 'Part 1'),
+        AppRoutes.part3Topics: (ctx) =>
+            const SpeakingTopicsScreen(partLabel: 'Part 3'),
       },
       onGenerateRoute: (settings) {
         if (settings.name == AppRoutes.cueCardDetail) {
@@ -372,6 +379,15 @@ class _IELTSSpeakingAppState extends State<IELTSSpeakingApp> {
             ),
           );
         }
+        if (settings.name == AppRoutes.speakingPractice) {
+          final args = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(
+            builder: (ctx) => SpeakingPracticeScreen(
+              topic: args['topic'] as SpeakingTopic,
+              partLabel: args['partLabel'] as String,
+            ),
+          );
+        }
         return null;
       },
     );
@@ -400,6 +416,9 @@ class AppRoutes {
   static const String mockInterview = '/mock-interview';
   static const String mockInterviewResult = '/mock-interview-result';
   static const String dailyQuestionPractice = '/daily-question-practice';
+  static const String part1Topics = '/part1-topics';
+  static const String part3Topics = '/part3-topics';
+  static const String speakingPractice = '/speaking-practice';
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

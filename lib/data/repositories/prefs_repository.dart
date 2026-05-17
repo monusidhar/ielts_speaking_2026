@@ -42,6 +42,10 @@ class PrefsRepository {
   static const _kTotalAiSessions = 'total_ai_sessions'; // int
   static const _kNotificationsEnabled = 'notifications_enabled'; // bool
 
+  // ── Part 1 & 3 Practice Tracking ───────────────────────────────────────
+  static const _kPart1Practiced = 'part1_practiced_ids'; // List<String>
+  static const _kPart3Practiced = 'part3_practiced_ids'; // List<String>
+
   // ── Singleton ──────────────────────────────────────────────────────────────
   static SharedPreferences? _prefs;
 
@@ -396,5 +400,37 @@ class PrefsRepository {
 
   static Future<void> setNotificationsEnabled(bool value) async {
     await _p.setBool(_kNotificationsEnabled, value);
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // PART 1 & PART 3 PRACTICE TRACKING
+  // ─────────────────────────────────────────────────────────────────────────
+
+  static Set<int> getPart1PracticedIds() {
+    final raw = _p.getStringList(_kPart1Practiced) ?? [];
+    return raw
+        .map((s) => int.tryParse(s) ?? -1)
+        .where((id) => id != -1)
+        .toSet();
+  }
+
+  static Future<void> markPart1Practiced(int topicId) async {
+    final ids = getPart1PracticedIds()..add(topicId);
+    await _p.setStringList(
+        _kPart1Practiced, ids.map((e) => e.toString()).toList());
+  }
+
+  static Set<int> getPart3PracticedIds() {
+    final raw = _p.getStringList(_kPart3Practiced) ?? [];
+    return raw
+        .map((s) => int.tryParse(s) ?? -1)
+        .where((id) => id != -1)
+        .toSet();
+  }
+
+  static Future<void> markPart3Practiced(int topicId) async {
+    final ids = getPart3PracticedIds()..add(topicId);
+    await _p.setStringList(
+        _kPart3Practiced, ids.map((e) => e.toString()).toList());
   }
 }
