@@ -29,6 +29,19 @@ class PrefsRepository {
   static const _kDailyQuestionDate =
       'daily_question_date'; // String (yyyy-MM-dd)
 
+  // ── Daily Streak keys ──────────────────────────────────────────────────
+  static const _kStreakCount = 'streak_count'; // int
+  static const _kStreakLastDate = 'streak_last_date'; // String (yyyy-MM-dd)
+
+  // ── Target Band & Exam Countdown ───────────────────────────────────────
+  static const _kTargetBand = 'target_band'; // double (e.g. 7.0)
+  static const _kExamDate = 'exam_date'; // String (yyyy-MM-dd)
+
+  // ── In-App Review & Notifications ──────────────────────────────────────
+  static const _kReviewPrompted = 'review_prompted'; // bool
+  static const _kTotalAiSessions = 'total_ai_sessions'; // int
+  static const _kNotificationsEnabled = 'notifications_enabled'; // bool
+
   // ── Singleton ──────────────────────────────────────────────────────────────
   static SharedPreferences? _prefs;
 
@@ -270,5 +283,118 @@ class PrefsRepository {
     await _p.setString(_kDailyQuestionDate, _todayStr());
     await _p.setString(_kDailyQuestionText, question);
     await _p.setString(_kDailyQuestionPart, part);
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // DAILY STREAK
+  // ─────────────────────────────────────────────────────────────────────────
+
+  /// Get current streak count (checks if streak is still valid)
+  static int getStreakCount() {
+    final lastDate = _p.getString(_kStreakLastDate) ?? '';
+    final today = _todayStr();
+    if (lastDate == today) return _p.getInt(_kStreakCount) ?? 0;
+
+    // Check if yesterday — streak still alive but not yet recorded today
+    final yesterday = DateTime.now().subtract(const Duration(days: 1));
+    final yStr =
+        '${yesterday.year}-${yesterday.month.toString().padLeft(2, '0')}-${yesterday.day.toString().padLeft(2, '0')}';
+    if (lastDate == yStr) return _p.getInt(_kStreakCount) ?? 0;
+
+    // More than 1 day gap — streak broken
+    return 0;
+  }
+
+  /// Record today's practice (call after any practice session)
+  static Future<void> recordStreakToday() async {
+    final today = _todayStr();
+    final lastDate = _p.getString(_kStreakLastDate) ?? '';
+    if (lastDate == today) return; // Already recorded today
+
+    final yesterday = DateTime.now().subtract(const Duration(days: 1));
+    final yStr =
+        '${yesterday.year}-${yesterday.month.toString().padLeft(2, '0')}-${yesterday.day.toString().padLeft(2, '0')}';
+
+    int newStreak;
+    if (lastDate == yStr) {
+      // Consecutive day — increment
+      newStreak = (_p.getInt(_kStreakCount) ?? 0) + 1;
+    } else {
+      // Gap or first ever — start fresh
+      newStreak = 1;
+    }
+    await _p.setString(_kStreakLastDate, today);
+    await _p.setInt(_kStreakCount, newStreak);
+  }
+
+  /// Whether today's practice has been done
+  static bool hasPracticedToday() {
+    return _p.getString(_kStreakLastDate) == _todayStr();
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // TARGET BAND & EXAM COUNTDOWN
+  // ─────────────────────────────────────────────────────────────────────────
+
+  static double? getTargetBand() {
+    final v = _p.getDouble(_kTargetBand);
+    return v;
+  }
+
+  static Future<void> setTargetBand(double band) async {
+    await _p.setDouble(_kTargetBand, band);
+  }
+
+  static String? getExamDate() => _p.getString(_kExamDate);
+
+  static Future<void> setExamDate(String dateStr) async {
+    await _p.setString(_kExamDate, dateStr);
+  }
+
+  static Future<void> clearExamDate() async {
+    await _p.remove(_kExamDate);
+  }
+
+  /// Days remaining until exam (null if no date set)
+  static int? getDaysUntilExam() {
+    final dateStr = getExamDate();
+    if (dateStr == null) return null;
+    try {
+      final exam = DateTime.parse(dateStr);
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      return exam.difference(today).inDays;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // IN-APP REVIEW TRACKING
+  // ─────────────────────────────────────────────────────────────────────────
+
+  static bool hasBeenReviewPrompted() => _p.getBool(_kReviewPrompted) ?? false;
+
+  static Future<void> setReviewPrompted() async {
+    await _p.setBool(_kReviewPrompted, true);
+  }
+
+  /// Total AI sessions ever (for triggering review prompt)
+  static int getTotalAiSessions() => _p.getInt(_kTotalAiSessions) ?? 0;
+
+  static Future<void> incrementTotalAiSessions() async {
+    final count = (_p.getInt(_kTotalAiSessions) ?? 0) + 1;
+    await _p.setInt(_kTotalAiSessions, count);
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // NOTIFICATION PREFERENCE
+  // ─────────────────────────────────────────────────────────────────────────
+
+  static bool isNotificationsEnabled() =>
+      _p.getBool(_kNotificationsEnabled) ?? true; // default ON
+
+  static Future<void> setNotificationsEnabled(bool value) async {
+    await _p.setBool(_kNotificationsEnabled, value);
   }
 }

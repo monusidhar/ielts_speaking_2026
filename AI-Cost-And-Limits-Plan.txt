@@ -1,0 +1,492 @@
+========================================================================
+   IELTS SPEAKING 2026 — AI COST, LIMITS & SCALING PLAN
+   Last Updated: 16 May 2026
+========================================================================
+
+
+========================================================================
+1. CURRENT SETUP
+========================================================================
+
+API Provider    : Groq (groq.com)
+Model           : Llama 3.3 70B Versatile (128k context)
+Speed           : ~394 tokens/sec
+Free Tier       : 14,400 requests/day, 30 requests/min
+Paid Price      : $0.59 per 1M input tokens, $0.79 per 1M output tokens
+In-App Price    : ₹199 one-time lifetime (no subscription)
+
+
+========================================================================
+2. FEATURES & API CALLS PER USE
+========================================================================
+
++-------------------------------+----------+---------------------------+
+| Feature                       | API Calls| What It Does              |
++-------------------------------+----------+---------------------------+
+| AI Cue Card Practice          |    1     | evaluateAnswer()          |
+|   (Part 2 speaking + AI eval) |          | ~1500 in + 2048 out tok   |
++-------------------------------+----------+---------------------------+
+| Daily AI Question Generation  |    1     | generateDailyQuestion()   |
+|   (shows on home screen)      |  /day    | ~200 in + 256 out tok     |
+|   (cached — 1 call per day    |          | Only if no cache for today|
+|    regardless of app opens)   |          |                           |
++-------------------------------+----------+---------------------------+
+| Daily Question Practice       |    1     | evaluateDailyAnswer()     |
+|   (Part 1/3 speak + AI eval)  |          | ~1200 in + 1536 out tok   |
++-------------------------------+----------+---------------------------+
+| Full Mock Interview           |    2     | generateQuestions() = 1   |
+|   (Part 1+2+3 full test)      |          | evaluateInterview() = 1   |
+|                               |          | ~3500 in + 5000 out tok   |
++-------------------------------+----------+---------------------------+
+| AI Pronunciation Highlights   |    0     | Included in evaluation    |
+|   (orange word highlighting)  |  extra   | responses — no extra call |
++-------------------------------+----------+---------------------------+
+| Daily Streak                  |    0     | Local SharedPreferences   |
+| Target Band + Exam Countdown  |    0     | Local SharedPreferences   |
+| Weak Area Analysis            |    0     | Reads practice history    |
+| Share Band Score              |    0     | share_plus (text only)    |
+| Push Notifications            |    0     | flutter_local_notifs      |
+| In-App Review Prompt          |    0     | in_app_review package     |
++-------------------------------+----------+---------------------------+
+
+TOTAL UNIQUE API METHODS: 4
+  - evaluateAnswer()        → cue card practice
+  - evaluateDailyAnswer()   → daily question practice
+  - generateDailyQuestion() → home screen daily question
+  - generateQuestions() + evaluateInterview() → mock interview
+
+
+========================================================================
+3. FREE vs PREMIUM USER LIMITS
+========================================================================
+
++-------------------------------+------------------+------------------+
+| Feature                       | FREE User        | PREMIUM User     |
++-------------------------------+------------------+------------------+
+| Browse Cue Cards              | First 50 cards   | All cards        |
+| Random Practice (no AI)       | Unlimited        | Unlimited        |
+| AI Cue Card Practice          | 5/day            | 15/day           |
+| Daily AI Question (view)      | Yes              | Yes              |
+| Daily Question Practice (AI)  | Shares 5/day     | Shares 15/day    |
+|   quota with cue card         | AI quota         | AI quota         |
+| Full Mock Interview           | 1 LIFETIME       | 5/day            |
+|   (one-time free trial)       | (never resets)   | (resets daily)   |
+| Ads                           | Banner +         | NO ADS           |
+|                               | Interstitial +   |                  |
+|                               | Video ads        |                  |
++-------------------------------+------------------+------------------+
+
+NOTE: "AI daily quota" is SHARED between cue card + daily question.
+      If free user does 3 cue card practices + 2 daily question practices
+      = 5 total, they're done for the day.
+
+
+========================================================================
+4. MAX API CALLS PER USER PER DAY
+========================================================================
+
+--- FREE USER (worst case = maxed out) ---
+  AI evaluations (cue card + daily q):  5 calls
+  Daily question generation:            1 call
+  Mock interview (1 lifetime only):     2 calls (one-time, not daily)
+  ─────────────────────────────────────────────
+  DAILY MAX:                            6 calls/day
+  FIRST DAY MAX (with mock trial):      8 calls
+
+--- PREMIUM USER (worst case = maxed out) ---
+  AI evaluations (cue card + daily q): 15 calls
+  Daily question generation:            1 call
+  Mock interviews (5 × 2 calls):       10 calls
+  ─────────────────────────────────────────────
+  DAILY MAX:                           26 calls/day
+
+--- REALISTIC (average active user) ---
+  Free user:   2-3 calls/day  (1-2 practices + 1 question gen)
+  Premium user: 5-8 calls/day  (3-5 practices + 1 mock + 1 gen)
+
+
+========================================================================
+5. GROQ FREE TIER CAPACITY — HOW MANY USERS CAN YOU HANDLE?
+========================================================================
+
+Groq Free Tier = 14,400 requests/day (single API key)
+
++---------------------------+-------------------+---------------------+
+| Scenario                  | Max Active Users  | Notes               |
+|                           | Per Day           |                     |
++---------------------------+-------------------+---------------------+
+| All free, maxed out       | 14,400 ÷ 6       | Very unlikely all   |
+|                           | = 2,400 users     | max out             |
++---------------------------+-------------------+---------------------+
+| All premium, maxed out    | 14,400 ÷ 26      | Extremely unlikely  |
+|                           | = 553 users       |                     |
++---------------------------+-------------------+---------------------+
+| Realistic mix             | 14,400 ÷ 3       | Most users do 2-4   |
+| (avg 3 calls/user)        | = 4,800 users     | calls/day           |
++---------------------------+-------------------+---------------------+
+| Conservative estimate     | 14,400 ÷ 4       | Safe planning       |
+| (avg 4 calls/user)        | = 3,600 users     | number              |
++---------------------------+-------------------+---------------------+
+
+RATE LIMIT: 30 requests/minute = 1,800 requests/hour
+  → If 100 users all practice at the same time, that's fine
+  → If 50+ users do mock interviews simultaneously, might hit limit
+
+VERDICT: Groq FREE tier is enough for 1,000-4,000 daily active users.
+         You pay NOTHING until you outgrow this.
+
+
+========================================================================
+6. WHEN TO BUY PAID API — DECISION TABLE
+========================================================================
+
++------------------+---------------------------------------------------+
+| Daily Active     | What You Need                                     |
+| Users (DAU)      |                                                   |
++------------------+---------------------------------------------------+
+| 0 - 1,000        | Groq FREE tier is enough                          |
+|                  | Cost: $0/month                                    |
++------------------+---------------------------------------------------+
+| 1,000 - 3,000    | Groq FREE tier still works                        |
+|                  | Monitor rate limits during peak hours             |
+|                  | Cost: $0/month                                    |
++------------------+---------------------------------------------------+
+| 3,000 - 5,000    | Approaching limit — set up Groq PAID account      |
+|                  | May need paid for peak hours                      |
+|                  | Cost: ~$5-15/month (overflow only)                |
++------------------+---------------------------------------------------+
+| 5,000 - 10,000   | Need Groq PAID plan                               |
+|                  | OR switch to Gemini (see Section 9)               |
+|                  | Cost: ~$15-50/month on Groq                       |
++------------------+---------------------------------------------------+
+| 10,000 - 50,000  | Need proper paid plan                             |
+|                  | Consider Gemini Flash-Lite for cost savings       |
+|                  | Cost: ~$50-200/month                              |
++------------------+---------------------------------------------------+
+| 50,000+          | Enterprise planning needed                        |
+|                  | Multiple API keys, load balancing                 |
+|                  | Cost: ~$200-800/month                             |
++------------------+---------------------------------------------------+
+
+
+========================================================================
+7. GROQ PAID TIER — COST PER USER CALCULATION
+========================================================================
+
+Model: Llama 3.3 70B Versatile
+Input:  $0.59 per 1,000,000 tokens
+Output: $0.79 per 1,000,000 tokens
+
+--- Cost per API call (approximate) ---
+
+  evaluateAnswer():
+    ~1,500 input tokens × $0.59/M  = $0.000885
+    ~1,500 output tokens × $0.79/M = $0.001185
+    TOTAL: ~$0.002 per call
+
+  evaluateDailyAnswer():
+    ~1,200 input × $0.59/M  = $0.000708
+    ~1,200 output × $0.79/M = $0.000948
+    TOTAL: ~$0.0017 per call
+
+  generateDailyQuestion():
+    ~200 input × $0.59/M  = $0.000118
+    ~200 output × $0.79/M = $0.000158
+    TOTAL: ~$0.0003 per call
+
+  Mock Interview (2 calls combined):
+    ~3,500 input × $0.59/M  = $0.002065
+    ~5,000 output × $0.79/M = $0.003950
+    TOTAL: ~$0.006 per mock interview
+
+--- Monthly cost per user type (30 days) ---
+
+  FREE user (avg 2-3 calls/day):
+    ~3 × $0.002 × 30 = ~$0.18/month
+
+  PREMIUM user (avg 5-8 calls/day):
+    ~7 × $0.002 × 30 + 1 mock/day × $0.006 × 30
+    = $0.42 + $0.18 = ~$0.60/month
+
+  PREMIUM user (maxed out every day):
+    15 × $0.002 + 5 × $0.006 + $0.0003 = ~$0.06/day
+    = ~$1.80/month ← worst case
+
+--- Monthly cost for X daily active users (on Groq PAID) ---
+
+  1,000 DAU (mixed free/premium):  ~$5-10/month
+  5,000 DAU (mixed):               ~$25-50/month
+  10,000 DAU (mixed):              ~$50-100/month
+  50,000 DAU (mixed):              ~$250-500/month
+
+
+========================================================================
+8. GEMINI AS ALTERNATIVE — IF GROQ CREDITS RUN OUT
+========================================================================
+
+If Groq free tier isn't enough anymore, Gemini is a strong alternative:
+
+--- GEMINI FREE TIER OPTIONS ---
+
+  Gemini 2.5 Flash-Lite (BEST for your use case):
+    - FREE tier: Unlimited* (with rate limits ~30 RPM)
+    - Quality: Good enough for IELTS evaluation
+    - Speed: Fast
+    - Your app needs: JSON mode (supported)
+
+  Gemini 2.5 Flash:
+    - FREE tier: Unlimited* (with rate limits)
+    - Quality: Better than Flash-Lite
+    - Speed: Very fast
+
+  * "Unlimited" = no per-token charges, but rate-limited
+    (approx 30 RPM, 1,500 RPD on free tier)
+
+--- GEMINI PAID TIER PRICING ---
+
+  Gemini 2.5 Flash-Lite (CHEAPEST):
+    Input:  $0.10 per 1M tokens
+    Output: $0.40 per 1M tokens
+    → ~$0.0007 per evaluation call (3x cheaper than Groq!)
+
+  Gemini 2.5 Flash:
+    Input:  $0.30 per 1M tokens
+    Output: $2.50 per 1M tokens
+    → ~$0.004 per evaluation call
+
+  Gemini 3 Flash (latest):
+    Input:  $0.50 per 1M tokens
+    Output: $3.00 per 1M tokens
+    → ~$0.005 per evaluation call
+
+--- COST COMPARISON TABLE ---
+
+  10,000 DAU monthly cost:
+    Groq Llama 3.3 70B:       ~$50-100/month
+    Gemini 2.5 Flash-Lite:    ~$15-30/month  ← CHEAPEST PAID
+    Gemini 2.5 Flash:         ~$80-150/month
+    Gemini 3 Flash:           ~$100-200/month
+
+--- RECOMMENDATION ---
+
+  PHASE 1 (0-3,000 DAU):     Stay on Groq FREE → $0/month
+  PHASE 2 (3,000-10,000 DAU): Switch to Gemini 2.5 Flash-Lite FREE tier
+                               as backup + Groq free as primary
+  PHASE 3 (10,000+ DAU):      Buy Gemini 2.5 Flash-Lite PAID
+                               → ~$15-30/month for 10K users
+  PHASE 4 (50,000+ DAU):      Gemini Flash-Lite paid → ~$75-150/month
+
+
+========================================================================
+9. WHICH GEMINI PACKAGE TO BUY & LIMITS TO SET
+========================================================================
+
+If you switch to Gemini paid:
+
+  RECOMMENDED MODEL: Gemini 2.5 Flash-Lite
+  WHY: Cheapest ($0.10 input / $0.40 output per 1M tokens)
+       Good enough quality for IELTS band scoring
+       Fast response times
+       Supports JSON output mode
+
+  GOOGLE AI BILLING:
+    - No monthly subscription — pure pay-as-you-go
+    - Just add billing to Google AI Studio → get higher rate limits
+    - No minimum spend
+    - You only pay for tokens you actually use
+
+  IF GEMINI PAID, ADJUST USER LIMITS TO:
+  +-------------------------------+-----------+-----------+
+  | Feature                       | Free User | Premium   |
+  +-------------------------------+-----------+-----------+
+  | AI Evaluations/day            | 5/day     | 20/day    |
+  |   (can increase, it's cheap)  |           | (was 15)  |
+  | Mock Interviews/day           | 1 lifetime| 7/day     |
+  |   (can increase)              |           | (was 5)   |
+  +-------------------------------+-----------+-----------+
+
+  MONTHLY BUDGET AT GEMINI FLASH-LITE RATES:
+    $10/month → supports ~15,000 DAU comfortably
+    $25/month → supports ~40,000 DAU
+    $50/month → supports ~80,000 DAU
+
+
+========================================================================
+10. IN-APP PRICING ANALYSIS — IS ₹199 ENOUGH?
+========================================================================
+
+--- CURRENT PRICE ---
+  ₹199 one-time lifetime = ~$2.35 USD
+
+--- COST TO SERVE 1 PREMIUM USER ---
+  On Groq FREE tier:     $0/month (until you hit 14,400 req/day limit)
+  On Groq Paid:          ~$0.60/month average
+  On Gemini Flash-Lite:  ~$0.15/month average
+
+--- LIFETIME VALUE CALCULATION ---
+
+  If avg premium user stays active for:
+    1 month:   $0.60 cost → ₹199 revenue → PROFIT ₹149 ($1.75)
+    6 months:  $3.60 cost → ₹199 revenue → PROFIT ₹-107 (LOSS on Groq paid)
+    6 months:  $0.90 cost → ₹199 revenue → PROFIT ₹123 (OK on Gemini)
+    12 months: $7.20 cost → ₹199 revenue → LOSS on Groq paid
+    12 months: $1.80 cost → ₹199 revenue → PROFIT ₹47 (thin on Gemini)
+
+--- REALITY CHECK ---
+  Most users: Buy premium → use heavily for 1-3 months → usage drops off
+  Ad revenue from free users: ₹0.50-2 per user per day (India eCPM)
+  So ₹199 lifetime is FINE as long as you:
+    1. Use Groq FREE tier as long as possible
+    2. Switch to Gemini Flash-Lite (cheapest) when scaling
+    3. Most revenue comes from ADS on free users, not premium sales
+
+--- SHOULD YOU INCREASE PRICE? ---
+
+  ₹199 is a GOOD price for India market because:
+    ✓ Impulse purchase — users don't think twice
+    ✓ Cheaper than 1 month of most IELTS apps
+    ✓ "Lifetime" is strong selling point
+    ✓ Converts well on Google Play
+
+  If you want more revenue per premium user:
+    OPTION A: Keep ₹199 lifetime (recommended for India)
+    OPTION B: ₹299 lifetime (still reasonable, test with A/B)
+    OPTION C: ₹99/month subscription (higher LTV but lower conversion)
+
+  FOR NOW: Keep ₹199. The real money is from free user ads.
+
+
+========================================================================
+11. AD REVENUE vs API COST — THE REAL MATH
+========================================================================
+
+--- AD REVENUE PER FREE USER (INDIA) ---
+  Banner eCPM (India):         ₹15-40 (~$0.18-0.47 per 1000 views)
+  Interstitial eCPM (India):   ₹30-80
+  Rewarded Video eCPM (India): ₹80-200
+
+  Avg free user per day: views 5-10 banners + 1 interstitial + 1 video
+  = roughly ₹0.50-2.00 per user per day
+  = ₹15-60 per user per month
+
+--- API COST PER FREE USER ---
+  On Groq FREE: $0/month
+  On Gemini Free: $0/month
+  On Groq Paid: ~$0.18/month (₹15)
+  On Gemini Paid: ~$0.05/month (₹4)
+
+--- BOTTOM LINE ---
+  Free users MAKE you money (ads > API cost)
+  Premium users are a bonus revenue stream
+  Your biggest cost risk is ONLY if you exhaust free API tiers
+
+  STRATEGY: Maximize free users (ads), offer premium as upsell.
+            Keep API on free tiers as long as possible.
+            When scaling, use cheapest model (Gemini Flash-Lite).
+
+
+========================================================================
+12. SCALING MILESTONES — ACTION PLAN
+========================================================================
+
+MILESTONE 1: 0 - 1,000 DAU
+  ✓ API:   Groq FREE tier (14,400 req/day)
+  ✓ Cost:  $0/month for AI
+  ✓ Price: ₹199 lifetime
+  ✓ Action: Focus on user acquisition, not costs
+
+MILESTONE 2: 1,000 - 3,000 DAU
+  ✓ API:   Groq FREE (still enough)
+  ✓ Cost:  $0/month
+  ✓ Action: Set up Gemini Flash-Lite as BACKUP (add fallback in code)
+            Monitor Groq rate limits daily
+
+MILESTONE 3: 3,000 - 10,000 DAU
+  → API:   Primary: Groq FREE + Overflow: Gemini Flash-Lite FREE
+  → Cost:  $0/month (dual free tiers = 14,400 + ~1,500 req/day)
+  → Action: Implement fallback logic (Groq first → Gemini if rate limited)
+
+MILESTONE 4: 10,000 - 30,000 DAU
+  → API:   Gemini 2.5 Flash-Lite PAID
+  → Cost:  ~$15-50/month
+  → Action: Add billing to Google AI Studio
+            Consider increasing premium price to ₹249-299
+
+MILESTONE 5: 30,000+ DAU
+  → API:   Gemini 2.5 Flash-Lite PAID (still cheapest)
+  → Cost:  ~$50-150/month
+  → Action: Ensure ad revenue covers API cost (it will)
+            Consider ₹299 lifetime or ₹79/month subscription option
+
+
+========================================================================
+13. QUICK REFERENCE — COSTS AT A GLANCE
+========================================================================
+
+  Per evaluation call:
+    Groq (Llama 3.3 70B):         ~$0.002
+    Gemini 2.5 Flash-Lite:        ~$0.0007   ← cheapest
+    Gemini 2.5 Flash:             ~$0.004
+    Gemini 3 Flash:               ~$0.005
+
+  Per mock interview (2 calls):
+    Groq:                         ~$0.006
+    Gemini 2.5 Flash-Lite:        ~$0.002    ← cheapest
+
+  Free tier daily limits:
+    Groq:   14,400 req/day, 30 req/min
+    Gemini: Rate-limited (~30 RPM free), no hard daily cap
+
+  Your in-app price:    ₹199 lifetime
+  Your API cost/month:  $0 (free tier) → $15-150 (10K-50K DAU paid)
+  Your ad revenue:      ₹15-60/free user/month
+
+  PROFIT MARGIN: Very high (especially while on free API tiers)
+
+
+========================================================================
+14. ENGAGEMENT FEATURES (NO API COST)
+========================================================================
+
+These features drive user retention and growth with ZERO extra API calls:
+
++-------------------------------+----------+---------------------------------+
+| Feature                       | API Cost | Impact                          |
++-------------------------------+----------+---------------------------------+
+| Daily Streak System           | $0       | Users come back daily to not    |
+|   (🔥 fire emoji + counter)   |          | lose streak. #1 retention tool  |
++-------------------------------+----------+---------------------------------+
+| Push Notifications            | $0       | "Don't lose your 5-day streak!" |
+|   (local, no server)          |          | Reminds users who forgot app    |
++-------------------------------+----------+---------------------------------+
+| Share Band Score              | $0       | Users share on WhatsApp/Insta   |
+|   (text + Play Store link)    |          | = FREE organic app downloads    |
++-------------------------------+----------+---------------------------------+
+| In-App Review Prompt          | $0       | More 5-star ratings = higher    |
+|   (native Play Store dialog)  |          | Play Store ranking = more users |
++-------------------------------+----------+---------------------------------+
+| Target Band + Exam Countdown  | $0       | Creates urgency → daily practice|
+|   (set goal + days remaining) |          | "Exam in 12 days" = motivation  |
++-------------------------------+----------+---------------------------------+
+| Weak Area Analysis            | $0       | "Grammar is your weakest (5.5)" |
+|   (from practice history)     |          | Personalized → user feels seen  |
++-------------------------------+----------+---------------------------------+
+
+  TOTAL EXTRA API COST:  $0/month
+  TOTAL EXTRA PACKAGES:  flutter_local_notifications, in_app_review
+
+  WHY THESE MATTER FOR GROWTH:
+    - Streak → retention (users open app daily)
+    - Notifications → reactivation (users who forgot come back)
+    - Share → viral growth (every share = free ad)
+    - Review → discovery (5-star ratings → Play Store rank)
+    - Goal/countdown → motivation (urgency drives practice)
+    - Weak area → personalization (users feel app "knows" them)
+
+  EXPECTED IMPACT:
+    - Day 7 retention: +20-40% (streak + notifications)
+    - Organic installs: +10-30% (sharing + reviews)
+    - Session length: +15-25% (weak area suggestions)
+
+
+========================================================================

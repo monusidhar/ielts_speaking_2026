@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../data/repositories/cue_card_repository.dart';
 import '../../data/services/ai_service.dart';
+import '../../data/services/share_service.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // FILE LOCATION: lib/screens/practice/ai_feedback_screen.dart
@@ -68,6 +69,20 @@ class _AiFeedbackScreenState extends State<AiFeedbackScreen>
             backgroundColor:
                 isDark ? const Color(0xFF0F1B2D) : _bandColor(f.overallBand),
             foregroundColor: Colors.white,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.share_rounded),
+                tooltip: 'Share Score',
+                onPressed: () => ShareService.shareBandScore(
+                  overallBand: f.overallBand,
+                  topic: widget.card.topic,
+                  fluency: f.fluencyBand,
+                  lexical: f.lexicalBand,
+                  grammar: f.grammarBand,
+                  pronunciation: f.pronunciationBand,
+                ),
+              ),
+            ],
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
                 decoration: BoxDecoration(

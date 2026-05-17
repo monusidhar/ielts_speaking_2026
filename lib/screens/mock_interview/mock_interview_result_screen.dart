@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../data/models/mock_interview_models.dart';
 import '../../data/repositories/cue_card_repository.dart';
 import '../../data/repositories/prefs_repository.dart';
+import '../../data/services/share_service.dart';
 import '../../widgets/banner_ad_widget.dart';
 import '../../main.dart';
 
@@ -243,6 +244,35 @@ class MockInterviewResultScreen extends StatelessWidget {
                     color: Colors.white.withOpacity(0.75),
                     fontSize: 13,
                     height: 1.4)),
+            const SizedBox(height: 14),
+            GestureDetector(
+              onTap: () => ShareService.shareMockResult(
+                overallBand: result.overallBand,
+                part1Band: result.part1Band,
+                part2Band: result.part2Band,
+                part3Band: result.part3Band,
+              ),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.share_rounded, color: Colors.white, size: 16),
+                    SizedBox(width: 6),
+                    Text('Share Result',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600)),
+                  ],
+                ),
+              ),
+            ),
           ]),
         ),
       ),

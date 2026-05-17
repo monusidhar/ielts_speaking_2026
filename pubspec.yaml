@@ -30,6 +30,12 @@ dependencies:
   # ── In-app update — Play Store update prompts ─────────────────────────────────
   in_app_update: ^4.2.3       # Google Play in-app update API
 
+  # ── In-app review — request Play Store rating ────────────────────────────────
+  in_app_review: ^2.0.10      # Play Store / App Store review prompt
+
+  # ── Local notifications — daily streak reminders ─────────────────────────────
+  flutter_local_notifications: ^18.0.1
+
   # ── Utilities ─────────────────────────────────────────────────────────────────
   url_launcher: ^6.3.0        # Open Play Store, email
   share_plus: ^13.0.0         # Share app with friends

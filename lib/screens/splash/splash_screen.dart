@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import '../../data/services/ad_service.dart';
+import '../../data/services/billing_service.dart';
+import '../../data/services/notification_service.dart';
+import '../../data/repositories/practice_history_repository.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // FILE LOCATION: lib/screens/splash/splash_screen.dart
@@ -46,12 +50,29 @@ class _SplashScreenState extends State<SplashScreen>
 
     _ctrl.forward();
 
-    // Auto-navigate to Home after 2 seconds
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        Navigator.pushReplacementNamed(context, '/home');
-      }
-    });
+    // Init heavy services in parallel WHILE splash animation plays,
+    // then navigate to home once both the minimum splash time (1.5s)
+    // and all inits are done.
+    _initAndNavigate();
+  }
+
+  Future<void> _initAndNavigate() async {
+    final results = await Future.wait([
+      // Minimum splash display time (animation needs ~1s)
+      Future.delayed(const Duration(milliseconds: 1500)),
+      // Heavy services run in parallel:
+      AdService.init(),
+      PracticeHistoryRepository.init(),
+      BillingService.init().catchError((e) {
+        debugPrint('Billing init failed (non-fatal): $e');
+      }),
+      NotificationService.init().catchError((e) {
+        debugPrint('Notification init failed (non-fatal): $e');
+      }),
+    ]);
+    if (mounted) {
+      Navigator.pushReplacementNamed(context, '/home');
+    }
   }
 
   @override

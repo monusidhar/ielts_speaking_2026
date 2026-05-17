@@ -8,6 +8,8 @@ import '../../data/repositories/cue_card_repository.dart';
 import '../../data/repositories/prefs_repository.dart';
 import '../../data/services/mock_interview_service.dart';
 import '../../data/services/ad_service.dart';
+import '../../data/services/review_service.dart';
+import '../../data/services/notification_service.dart';
 import '../../main.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -335,9 +337,12 @@ class _MockInterviewScreenState extends State<MockInterviewScreen>
       // Track usage
       await PrefsRepository.incrementMockCount();
       await PrefsRepository.markPracticed(_card!.id);
+      await PrefsRepository.recordStreakToday();
 
       // Show interstitial ad before results
       await AdService.showVideoAdAfterAiPractice();
+      ReviewService.maybeRequestReview(result.overallBand);
+      NotificationService.onPracticeCompleted();
 
       if (!mounted) return;
       // Navigate to results

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'data/repositories/prefs_repository.dart';
 import 'data/services/ad_service.dart';
 import 'data/services/billing_service.dart';
+import 'data/services/notification_service.dart';
 
 // ─── Screen Imports ───────────────────────────────────────────────────────────
 import 'screens/splash/splash_screen.dart';
@@ -44,21 +45,12 @@ void main() async {
     ),
   );
 
-  // ── Init SharedPreferences ────────────────────────────────────────────────
+  // ── Init SharedPreferences (fast, needed for theme) ─────────────────────
   await PrefsRepository.init();
 
-  // ── Init AdMob ────────────────────────────────────────────────────────────
-  await AdService.init();
-
-  // ── Init Practice History ────────────────────────────────────────────────
-  await PracticeHistoryRepository.init();
-
-  // ── Init Billing (₹199 remove ads) ───────────────────────────────────────
-  try {
-    await BillingService.init();
-  } catch (e) {
-    debugPrint('Billing init failed (non-fatal): $e');
-  }
+  // Heavy services (AdMob, Billing, Notifications, PracticeHistory)
+  // are initialized in parallel during the splash screen animation
+  // to avoid blocking the UI for 5-7 seconds.
 
   runApp(const IELTSSpeakingApp());
 }

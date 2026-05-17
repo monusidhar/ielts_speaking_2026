@@ -8,6 +8,8 @@ import '../../data/repositories/prefs_repository.dart';
 import '../../data/repositories/practice_history_repository.dart';
 import '../../data/services/ai_service.dart';
 import '../../data/services/ad_service.dart';
+import '../../data/services/review_service.dart';
+import '../../data/services/notification_service.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // FILE LOCATION: lib/screens/practice/ai_practice_screen.dart
@@ -328,7 +330,10 @@ class _AiPracticeScreenState extends State<AiPracticeScreen>
       // Mark card as practiced & increment daily AI counter
       await PrefsRepository.markPracticed(_card!.id);
       await PrefsRepository.incrementAiDailyCount();
+      await PrefsRepository.recordStreakToday();
       await AdService.showVideoAdAfterAiPractice();
+      ReviewService.maybeRequestReview(feedback.overallBand);
+      NotificationService.onPracticeCompleted();
 
       if (mounted) {
         setState(() {

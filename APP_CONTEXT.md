@@ -1,7 +1,7 @@
 # IELTS Speaking 2026 — Full App Context
 
 > **Use this file** to give any AI assistant full context about this project.
-> Last updated: 15 May 2026
+> Last updated: 16 May 2026
 
 ---
 
@@ -43,7 +43,10 @@ lib/
 │       ├── ai_service.dart            # Groq API for AI feedback (cue card practice)
 │       ├── mock_interview_service.dart # Groq API for mock interview (question gen + evaluation)
 │       ├── billing_service.dart       # Google Play in-app purchase
-│       └── update_service.dart        # Remote forced-update check
+│       ├── update_service.dart        # Remote forced-update check
+│       ├── notification_service.dart  # Local push notifications (streak reminders)
+│       ├── share_service.dart         # Share band scores to social media
+│       └── review_service.dart        # In-app review prompt (Play Store rating)
 ├── screens/
 │   ├── splash/splash_screen.dart      # Animated splash → /home
 │   ├── home/home_screen.dart          # Dashboard with stats, daily tip, nav grid
@@ -61,6 +64,8 @@ lib/
 │   │   ├── mock_interview_intro_screen.dart  # Format explainer + credit check
 │   │   ├── mock_interview_screen.dart       # Full interview flow (Part 1→2→3)
 │   │   └── mock_interview_result_screen.dart # Band scores + per-part feedback + premium upsell
+│   ├── daily_question/
+│   │   └── daily_question_practice_screen.dart # Daily AI question practice (speak → AI score)
 │   ├── premium/premium_screen.dart    # Purchase/restore premium
 │   ├── privacy/privacy_screen.dart    # Privacy policy
 │   └── about/about_screen.dart        # Version, contact, Play Store link
@@ -94,8 +99,9 @@ assets/
 | `AppRoutes.mockInterviewIntro` | `/mock-interview-intro` | `MockInterviewIntroScreen` | — |
 | `AppRoutes.mockInterview` | `/mock-interview` | `MockInterviewScreen` | — |
 | `AppRoutes.mockInterviewResult` | `/mock-interview-result` | `MockInterviewResultScreen` | `{'result': MockInterviewResult, 'card': CueCard}` |
+| `AppRoutes.dailyQuestionPractice` | `/daily-question-practice` | `DailyQuestionPracticeScreen` | `{'question': String, 'partType': String}` |
 
-Routes are defined in `main.dart`. Simple routes use `routes:` map; `cueCardDetail`, `aiFeedback`, and `mockInterviewResult` use `onGenerateRoute`.
+Routes are defined in `main.dart`. Simple routes use `routes:` map; `cueCardDetail`, `aiFeedback`, `mockInterviewResult`, and `dailyQuestionPractice` use `onGenerateRoute`.
 
 ---
 
@@ -154,6 +160,7 @@ class AiFeedback {
   List<String> improvements;
   List<String> suggestedVocabulary;
   String improvedAnswer;
+  List<String> pronunciationFlags;  // NEW: words flagged for pronunciation practice
 }
 ```
 
@@ -239,6 +246,16 @@ class MockInterviewResult {
 | `mock_free_completed` | `bool` | Whether free user has used their 1 lifetime mock trial |
 | `mock_daily_count` | `int` | Mock interviews done today (premium counter) |
 | `mock_daily_date` | `String` | Date of last mock count reset |
+| `daily_question_text` | `String` | Cached daily AI question text |
+| `daily_question_part` | `String` | Part type of daily question ("Part 1" or "Part 3") |
+| `daily_question_date` | `String` | Date of cached daily question |
+| `streak_count` | `int` | Current daily streak count |
+| `streak_last_date` | `String` | Date of last practice (streak tracking) |
+| `target_band` | `double` | User's target band score (e.g. 7.0) |
+| `exam_date` | `String` | User's exam date (yyyy-MM-dd) |
+| `review_prompted` | `bool` | Whether in-app review has been shown |
+| `total_ai_sessions` | `int` | Lifetime AI session count (for review trigger) |
+| `notifications_enabled` | `bool` | Whether daily reminders are on (default: true) |
 
 ---
 
@@ -251,6 +268,7 @@ class MockInterviewResult {
 | Random practice | Random from first 50 | Random from all |
 | AI Speaking Coach (cue card) | 5 uses/day | 15 uses/day |
 | **Full Mock Interview** | **1 lifetime trial** | **5/day** |
+| **Daily AI Question** | **View question + practice (uses AI daily quota)** | **Same** |
 | Ads | Banner + interstitial + rewarded | No ads |
 | Bookmarks | Unlimited | Unlimited |
 | Practice history | Available | Available |
@@ -265,9 +283,9 @@ class MockInterviewResult {
 
 | Ad Type | Where | Trigger |
 |---------|-------|---------|
-| **Banner** | Bottom of cue card list, cue card detail | Always visible (free users) |
+| **Banner** | Bottom of cue card list, cue card detail, mock interview intro, mock interview result, daily question practice | Always visible (free users) |
 | **Interstitial** | After random practice | Every 3 practices (`_interstitialFrequency = 3`) |
-| **Rewarded** | After AI practice | After completing AI evaluation |
+| **Rewarded/Video** | After AI cue card practice, after mock interview completes (before results), after daily question practice | After completing AI evaluation |
 
 All ads auto-hidden when `isPremium == true`. Uses `google_mobile_ads` + `gma_mediation_unity`.
 
@@ -281,7 +299,11 @@ All ads auto-hidden when `isPremium == true`. Uses `google_mobile_ads` + `gma_me
 - **Input:** User transcript, cue card topic + prompts + sample answer, speaking duration
 - **Output:** `AiFeedback` object with band scores, comment, strengths, improvements, suggested vocab, improved answer
 - **Rate limiting:** 5 free / 15 premium per day
-- **Method:** `AiService.evaluateAnswer()`
+- **Methods:**
+  - `AiService.evaluateAnswer()` — evaluates cue card Part 2 answer
+  - `AiService.evaluateDailyAnswer()` — evaluates Part 1/3 daily question answer (different prompt tuned for short answers)
+  - `AiService.generateDailyQuestion()` — generates a fresh Part 1 or Part 3 question per day (cached in SharedPreferences)
+- **Pronunciation Flags:** Both evaluation methods now return `pronunciation_flags` — a list of 2-8 words from the transcript that are commonly mispronounced
 - **Check:** `AiService.isConfigured` → false if API key is empty
 
 ### MockInterviewService (`mock_interview_service.dart`) — Full Mock Interview
@@ -310,6 +332,26 @@ All ads auto-hidden when `isPremium == true`. Uses `google_mobile_ads` + `gma_me
 ### AdService (`ad_service.dart`)
 - AdMob IDs: from `AppSecrets` (real) or test IDs (debug)
 - Methods: `init()`, `createBanner()`, `showInterstitialAfterPractice()`, `showInterstitial()`, `showVideoAdAfterAiPractice()`
+
+### NotificationService (`notification_service.dart`)
+- Uses `flutter_local_notifications` for daily practice reminders
+- Scheduled daily via `periodicallyShow()` (no exact-time permission needed)
+- Content adapts to streak: "Don't lose your 5-day streak!" or "Time to practice!"
+- Methods: `init()`, `requestPermission()`, `scheduleDailyReminder()`, `cancelAll()`, `setEnabled()`, `onPracticeCompleted()`
+- Called from `main()` on app launch, and after each practice session
+
+### ShareService (`share_service.dart`)
+- Uses `share_plus` (already in deps)
+- Generates formatted text with band scores + Play Store download link
+- Methods: `shareBandScore()`, `shareMockResult()`, `shareDailyScore()`
+- Share buttons on: AI feedback screen (app bar), mock interview results (header), daily question results
+
+### ReviewService (`review_service.dart`)
+- Uses `in_app_review` package for native Play Store/App Store review dialog
+- Triggers once: after 3+ AI sessions AND band >= 6.0
+- Tracked via `review_prompted` and `total_ai_sessions` in SharedPreferences
+- Methods: `maybeRequestReview(double bandScore)`
+- Called automatically after AI/mock/daily evaluations complete
 
 ---
 
@@ -352,8 +394,10 @@ band8:            0xFF6A1B9A
 | `fl_chart` | ^0.70.2 | Band score progress charts |
 | `in_app_update` | ^4.2.3 | Google Play in-app update |
 | `url_launcher` | ^6.3.0 | Open URLs (Play Store, email) |
-| `share_plus` | ^13.0.0 | Share app with friends |
+| `share_plus` | ^13.0.0 | Share app/scores with friends |
 | `package_info_plus` | ^10.0.0 | App version info |
+| `in_app_review` | ^2.0.10 | Play Store in-app review prompt |
+| `flutter_local_notifications` | ^18.0.1 | Local push notifications (streak reminders) |
 
 ---
 
@@ -455,3 +499,215 @@ Simulates a complete IELTS Speaking test (Part 1 + Part 2 + Part 3) with AI-powe
 - Free user completes 1 mock interview → sees results → premium upsell card appears
 - After trial used, intro screen "Start" button changes to "Upgrade to Premium"
 - Existing cue card AI practice (5/day free) runs independently — not affected
+
+---
+
+## 18. AI Pronunciation Highlights Feature
+
+### Overview
+After AI practice (cue card or daily question), mispronounced/weak words in the user's transcript are color-coded orange.
+
+### How It Works
+1. AI prompt includes `pronunciation_flags` field — asks Groq to identify 2-8 commonly mispronounced words from the transcript
+2. `AiFeedback.pronunciationFlags` stores the flagged words (lowercase)
+3. Transcript display uses `RichText` + `TextSpan` to highlight matching words
+4. Orange background + bold styling for flagged words
+5. Legend text explains the highlighting below the transcript
+
+### Screens With Highlighting
+- **`ai_feedback_screen.dart`** — "Your Response" section uses `_buildHighlightedTranscript()`
+- **`daily_question_practice_screen.dart`** — inline results also use `_buildHighlightedTranscript()`
+
+### Graceful Fallback
+- If `pronunciationFlags` is empty (older API responses, API failure), transcript renders as plain text — no highlighting, no errors
+
+---
+
+## 19. Daily AI Question Feature
+
+### Overview
+A fresh AI-generated IELTS Speaking question appears on the Home screen every day. Users can practice speaking the answer and get AI feedback.
+
+### Flow
+1. **Home Screen** → "Daily AI Question" card shows question + Part badge
+2. Card loads from SharedPreferences cache first; if no cache for today, calls `AiService.generateDailyQuestion()` (1 Groq API call)
+3. Tap "Practice with AI" → navigates to `/daily-question-practice` with question + partType
+4. **Daily Question Practice Screen** → shows question → user taps mic to speak (30s Part 1 / 60s Part 3) → AI evaluates → shows band score + feedback inline (with pronunciation highlights)
+5. Uses the shared AI daily quota (5 free / 15 premium per day)
+
+### Home Screen Widget (`_buildDailyQuestion`)
+- Blue gradient card between Explore grid and Daily Tip
+- Shows: brain icon, "Daily AI Question" title, Part badge, question text, "Practice with AI" button
+- Loading state: spinner + "Generating today's question..."
+- Hidden if no question loaded and not loading
+
+### Daily Question Practice Screen (`daily_question_practice_screen.dart`)
+- Phases: `idle` → `speaking` → `analyzing` → `done`
+- No prep timer (unlike cue card practice)
+- Timing: 30s for Part 1, 60s for Part 3
+- Uses `speech_to_text` for recording (same restart/safety pattern as AI practice)
+- AI evaluation via `AiService.evaluateDailyAnswer()` (separate prompt tuned for Part 1/3)
+- Results shown inline (no separate feedback screen) — band score, criteria bars, comment, strengths, improvements, improved answer, highlighted transcript
+- Banner ad at bottom, video ad after evaluation completes
+
+### Caching (in `PrefsRepository`)
+- `daily_question_text` — cached question string
+- `daily_question_part` — "Part 1" or "Part 3"
+- `daily_question_date` — date string, resets daily
+- Methods: `getDailyQuestion()`, `getDailyQuestionPart()`, `saveDailyQuestion()`
+
+### API Cost
+- 1 Groq call/day for question generation (temperature 0.9 for variety)
+- 1 Groq call per practice attempt (uses AI daily quota)
+- Fallback question if API fails: "What do you enjoy doing in your free time?" (Part 1)
+
+---
+
+## 20. Daily Streak System
+
+### Overview
+Tracks consecutive days of practice. Any practice (random, AI, mock, daily question) counts.
+
+### How It Works
+1. After any practice completes → `PrefsRepository.recordStreakToday()` is called
+2. If `streak_last_date == today` → already counted, skip
+3. If `streak_last_date == yesterday` → increment streak
+4. If gap > 1 day → streak resets to 1
+5. Home screen displays streak count with fire emoji (🔥) in orange gradient card
+
+### Home Screen Widget (`_buildStreakAndGoal`)
+- Left: streak card (🔥 + count + "Day streak ✓")
+- Right: target band + exam countdown (tap to edit)
+- Streak 0 = muted card (💤), streak > 0 = orange gradient with shadow
+
+### SharedPreferences Keys
+- `streak_count` — current streak number
+- `streak_last_date` — date string (yyyy-MM-dd)
+
+### Methods in PrefsRepository
+- `getStreakCount()` — returns 0 if streak is broken (gap > 1 day)
+- `recordStreakToday()` — called after any practice
+- `hasPracticedToday()` — used for UI checkmark
+
+---
+
+## 21. Push Notifications (Daily Reminders)
+
+### Overview
+Local push notifications remind users to practice daily, mentioning their streak.
+
+### Implementation
+- **Package:** `flutter_local_notifications` ^18.0.1
+- **Channel:** `daily_reminder` ("Daily Practice Reminder")
+- **Schedule:** `periodicallyShow()` with `RepeatInterval.daily`
+- **No server needed** — fully local
+
+### Notification Content (dynamic)
+- Streak active + not practiced today: "Don't lose your X-day streak! 🔥"
+- Streak active + practiced today: "Keep your X-day streak going! 🔥"
+- No streak: "Time to practice speaking! 🎯"
+
+### Lifecycle
+1. `NotificationService.init()` called in `main()` (try/catch, non-fatal)
+2. If `notifications_enabled == true`, schedules daily reminder
+3. After each practice → `onPracticeCompleted()` reschedules with updated streak text
+4. User can toggle via `setEnabled(bool)`
+
+---
+
+## 22. Share Band Score
+
+### Overview
+Users can share their band scores on social media (WhatsApp, Instagram, etc.) with a Play Store link.
+
+### Share Buttons Location
+- **AI Feedback Screen** — share icon in app bar
+- **Mock Interview Results** — "Share Result" button in header
+- **Daily Question Results** — "Share" button below band score
+
+### Generated Text Format
+```
+🎯 I scored Band 7.0 on IELTS Speaking practice!
+📝 Topic: Describe a place you visited
+🗣️ Fluency: 7.0 | 📖 Lexical: 6.5
+✏️ Grammar: 7.0 | 🔊 Pronunciation: 7.5
+Practicing with IELTS Speaking 2026 app!
+Download: https://play.google.com/store/apps/details?id=com.monusidhar.ielts_speaking_2026
+```
+
+### Methods in ShareService
+- `shareBandScore()` — AI cue card practice
+- `shareMockResult()` — mock interview (overall + per-part bands)
+- `shareDailyScore()` — daily question practice
+
+---
+
+## 23. In-App Review Prompt
+
+### Overview
+Asks users to rate the app on Play Store at the optimal moment — one time only.
+
+### Trigger Conditions (ALL must be met)
+1. User has completed 3+ AI practice sessions (tracked via `total_ai_sessions`)
+2. User just scored Band 6.0+ (good experience = good review)
+3. `review_prompted` is false (never asked before)
+
+### Implementation
+- **Package:** `in_app_review` ^2.0.10
+- Checks `InAppReview.isAvailable()` before showing
+- Uses native Play Store review dialog (not a custom popup)
+- Called from: `ai_practice_screen`, `daily_question_practice_screen`, `mock_interview_screen`
+
+---
+
+## 24. Target Band & Exam Countdown
+
+### Overview
+Users set their target band score and exam date. Shown on home screen to create urgency.
+
+### Home Screen Display
+- Part of the streak row (`_buildStreakAndGoal`)
+- Shows: 🎯 "Target Band 7.0" + 📅 "Exam in 23 days"
+- Turns red when exam is within 7 days
+- Tap to open edit dialog
+
+### Edit Dialog (`_showGoalDialog`)
+- Band slider: 5.0 → 9.0 (step 0.5)
+- Date picker for exam date (optional, can clear)
+- Saves to SharedPreferences immediately
+
+### SharedPreferences Keys
+- `target_band` — double (e.g. 7.0)
+- `exam_date` — string (yyyy-MM-dd), nullable
+
+### Methods in PrefsRepository
+- `getTargetBand()` / `setTargetBand()`
+- `getExamDate()` / `setExamDate()` / `clearExamDate()`
+- `getDaysUntilExam()` — computed, returns null if no date set
+
+---
+
+## 25. Weak Area Analysis
+
+### Overview
+Analyzes practice history to identify the user's weakest IELTS criterion and shows an actionable tip.
+
+### How It Works
+1. Reads last 10 `PracticeSession` entries from `PracticeHistoryRepository`
+2. Computes average for each criterion: Fluency, Lexical Resource, Grammar, Pronunciation
+3. Identifies the lowest-scoring criterion
+4. Displays as a card on home screen with icon, avg score, and specific improvement tip
+
+### Home Screen Card (`_buildWeakAreaCard`)
+- Only shown after 3+ AI practice sessions (otherwise hidden)
+- Example: "📝 Focus Area — Grammar needs work (Avg 5.5) — Practice using past perfect and conditionals in answers."
+- Color-coded by criterion type (purple/green/orange/blue)
+
+### Tips per Area
+- **Fluency:** "Try speaking non-stop for 1 minute on any topic daily."
+- **Lexical Resource:** "Learn 3 new topic-specific words every day and use them."
+- **Grammar:** "Practice using past perfect and conditionals in answers."
+- **Pronunciation:** "Record yourself and compare with native speaker audio."
+
+### No API Calls
+Purely local computation from existing practice history data — zero API cost.

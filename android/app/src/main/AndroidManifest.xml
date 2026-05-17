@@ -6,6 +6,9 @@
     <!-- Microphone for AI Speaking Coach (speech_to_text) -->
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 
+    <!-- Local push notifications (daily streak reminders) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
     <application
         android:label="IELTS Speaking Cue Card"
         android:name="${applicationName}"

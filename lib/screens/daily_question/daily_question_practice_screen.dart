@@ -6,6 +6,9 @@ import 'package:speech_to_text/speech_recognition_result.dart';
 import '../../data/repositories/prefs_repository.dart';
 import '../../data/services/ai_service.dart';
 import '../../data/services/ad_service.dart';
+import '../../data/services/review_service.dart';
+import '../../data/services/notification_service.dart';
+import '../../data/services/share_service.dart';
 import '../../widgets/banner_ad_widget.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -232,7 +235,10 @@ class _DailyQuestionPracticeScreenState
       );
 
       await PrefsRepository.incrementAiDailyCount();
+      await PrefsRepository.recordStreakToday();
       await AdService.showVideoAdAfterAiPractice();
+      ReviewService.maybeRequestReview(feedback.overallBand);
+      NotificationService.onPracticeCompleted();
 
       if (mounted) {
         setState(() {
@@ -646,6 +652,34 @@ class _DailyQuestionPracticeScreenState
                       fontWeight: FontWeight.bold)),
               Text(_bandLabel(f.overallBand),
                   style: const TextStyle(color: Colors.white, fontSize: 13)),
+              const SizedBox(height: 10),
+              GestureDetector(
+                onTap: () => ShareService.shareDailyScore(
+                  overallBand: f.overallBand,
+                  question: widget.question,
+                  partType: widget.partType,
+                ),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.25),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.share_rounded, color: Colors.white, size: 14),
+                      SizedBox(width: 4),
+                      Text('Share',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600)),
+                    ],
+                  ),
+                ),
+              ),
             ]),
           ),
         ),

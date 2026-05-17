@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../data/repositories/cue_card_repository.dart';
 import '../../data/repositories/prefs_repository.dart';
+import '../../data/repositories/practice_history_repository.dart';
 import '../../data/services/ai_service.dart';
 import '../../data/services/update_service.dart';
 import '../../main.dart';
@@ -39,7 +40,13 @@ class _HomeScreenState extends State<HomeScreen>
   String? _dailyQuestion;
   String _dailyQuestionPart = 'Part 1';
   bool _dailyQuestionLoading = false;
-
+  // ── Streak, Target, Weak Area ───────────────────────────────────────
+  int _streak = 0;
+  bool _practicedToday = false;
+  double? _targetBand;
+  int? _daysUntilExam;
+  String? _weakestArea;
+  double? _weakestScore;
   final List<String> _tips = [
     'Use a variety of tenses — past, present perfect, and conditional — to show grammatical range.',
     'Open with a strong topic sentence and end with a personal opinion or reflection.',
@@ -57,11 +64,11 @@ class _HomeScreenState extends State<HomeScreen>
     _animCtrl = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 800));
     _fadeAnims = List.generate(
-        6,
+        9,
         (i) => Tween<double>(begin: 0, end: 1).animate(CurvedAnimation(
             parent: _animCtrl,
             curve:
-                Interval(i * 0.12, (i * 0.12) + 0.5, curve: Curves.easeOut))));
+                Interval(i * 0.08, (i * 0.08) + 0.5, curve: Curves.easeOut))));
     _loadAll();
     UpdateService.checkForUpdate(); // Fire-and-forget: Play Store update check
   }
@@ -96,6 +103,11 @@ class _HomeScreenState extends State<HomeScreen>
           _totalCards = cards.length;
           _practiced = PrefsRepository.getPracticedUniqueCount();
           _bookmarked = PrefsRepository.getBookmarkedCount();
+          _streak = PrefsRepository.getStreakCount();
+          _practicedToday = PrefsRepository.hasPracticedToday();
+          _targetBand = PrefsRepository.getTargetBand();
+          _daysUntilExam = PrefsRepository.getDaysUntilExam();
+          _computeWeakArea();
           _isLoading = false;
         });
         _animCtrl.forward();
@@ -146,8 +158,46 @@ class _HomeScreenState extends State<HomeScreen>
       setState(() {
         _practiced = PrefsRepository.getPracticedUniqueCount();
         _bookmarked = PrefsRepository.getBookmarkedCount();
+        _streak = PrefsRepository.getStreakCount();
+        _practicedToday = PrefsRepository.hasPracticedToday();
+        _targetBand = PrefsRepository.getTargetBand();
+        _daysUntilExam = PrefsRepository.getDaysUntilExam();
+        _computeWeakArea();
       });
     }
+  }
+
+  void _computeWeakArea() {
+    final sessions = PracticeHistoryRepository.getAll();
+    if (sessions.length < 3) {
+      _weakestArea = null;
+      _weakestScore = null;
+      return;
+    }
+    // Use last 10 sessions max for recent performance
+    final recent = sessions.take(10).toList();
+    final avgFluency =
+        recent.map((s) => s.fluencyBand).reduce((a, b) => a + b) /
+            recent.length;
+    final avgLexical =
+        recent.map((s) => s.lexicalBand).reduce((a, b) => a + b) /
+            recent.length;
+    final avgGrammar =
+        recent.map((s) => s.grammarBand).reduce((a, b) => a + b) /
+            recent.length;
+    final avgPronunciation =
+        recent.map((s) => s.pronunciationBand).reduce((a, b) => a + b) /
+            recent.length;
+
+    final scores = {
+      'Fluency': avgFluency,
+      'Lexical Resource': avgLexical,
+      'Grammar': avgGrammar,
+      'Pronunciation': avgPronunciation,
+    };
+    final weakest = scores.entries.reduce((a, b) => a.value <= b.value ? a : b);
+    _weakestArea = weakest.key;
+    _weakestScore = weakest.value;
   }
 
   @override
@@ -166,19 +216,26 @@ class _HomeScreenState extends State<HomeScreen>
             SliverToBoxAdapter(child: _buildHeader(isDark)),
             SliverToBoxAdapter(
                 child: _FadeSection(
-                    anim: _fadeAnims[0], child: _buildStats(isDark))),
+                    anim: _fadeAnims[0], child: _buildStreakAndGoal(isDark))),
             SliverToBoxAdapter(
                 child: _FadeSection(
-                    anim: _fadeAnims[1], child: _buildQuickActions(isDark))),
+                    anim: _fadeAnims[1], child: _buildStats(isDark))),
             SliverToBoxAdapter(
                 child: _FadeSection(
-                    anim: _fadeAnims[2], child: _buildExploreGrid(isDark))),
+                    anim: _fadeAnims[2], child: _buildQuickActions(isDark))),
             SliverToBoxAdapter(
                 child: _FadeSection(
-                    anim: _fadeAnims[3], child: _buildDailyQuestion(isDark))),
+                    anim: _fadeAnims[3], child: _buildExploreGrid(isDark))),
             SliverToBoxAdapter(
                 child: _FadeSection(
-                    anim: _fadeAnims[4], child: _buildDailyTip(isDark))),
+                    anim: _fadeAnims[4], child: _buildDailyQuestion(isDark))),
+            if (_weakestArea != null)
+              SliverToBoxAdapter(
+                  child: _FadeSection(
+                      anim: _fadeAnims[5], child: _buildWeakAreaCard(isDark))),
+            SliverToBoxAdapter(
+                child: _FadeSection(
+                    anim: _fadeAnims[6], child: _buildDailyTip(isDark))),
             const SliverToBoxAdapter(child: SizedBox(height: 32)),
           ],
         ),
@@ -702,6 +759,432 @@ class _HomeScreenState extends State<HomeScreen>
                   ),
                 ],
               ),
+      ),
+    );
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // STREAK + TARGET BAND + EXAM COUNTDOWN
+  // ─────────────────────────────────────────────────────────────────────────
+
+  Widget _buildStreakAndGoal(bool isDark) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+      child: Row(children: [
+        // ── Streak Card ──────────────────────────────────────────────────
+        Expanded(
+          child: GestureDetector(
+            onTap: () {
+              // Visual feedback only — streak is automatic
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(_practicedToday
+                    ? 'Great job! You practiced today.'
+                    : 'Practice today to keep your streak!'),
+                duration: const Duration(seconds: 2),
+              ));
+            },
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: _streak > 0
+                      ? [const Color(0xFFFF6D00), const Color(0xFFFF9100)]
+                      : isDark
+                          ? [const Color(0xFF1A2E4A), const Color(0xFF1A2E4A)]
+                          : [Colors.white, Colors.white],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: isDark || _streak == 0
+                    ? []
+                    : [
+                        BoxShadow(
+                            color: const Color(0xFFFF6D00).withOpacity(0.3),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4))
+                      ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(children: [
+                    Text(_streak > 0 ? '🔥' : '💤',
+                        style: const TextStyle(fontSize: 22)),
+                    const SizedBox(width: 8),
+                    Text('$_streak',
+                        style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: _streak > 0
+                                ? Colors.white
+                                : isDark
+                                    ? const Color(0xFFCDD5E0)
+                                    : const Color(0xFF1A1A2E))),
+                  ]),
+                  const SizedBox(height: 4),
+                  Text(
+                    _streak > 0
+                        ? 'Day streak${_practicedToday ? ' ✓' : ''}'
+                        : 'No streak yet',
+                    style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: _streak > 0
+                            ? Colors.white.withOpacity(0.85)
+                            : isDark
+                                ? const Color(0xFF557799)
+                                : const Color(0xFF888899)),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        // ── Target Band + Exam Card ──────────────────────────────────────
+        Expanded(
+          flex: 2,
+          child: GestureDetector(
+            onTap: () => _showGoalDialog(),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF1A2E4A) : Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: isDark
+                    ? []
+                    : [
+                        BoxShadow(
+                            color: Colors.black.withOpacity(0.04),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2))
+                      ],
+              ),
+              child: _targetBand != null || _daysUntilExam != null
+                  ? Row(children: [
+                      if (_targetBand != null) ...[
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1565C0).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(Icons.flag_rounded,
+                              color: Color(0xFF1565C0), size: 20),
+                        ),
+                        const SizedBox(width: 10),
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Target',
+                                  style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w600,
+                                      color: isDark
+                                          ? const Color(0xFF557799)
+                                          : const Color(0xFF888899))),
+                              Text('Band ${_targetBand!.toStringAsFixed(1)}',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: isDark
+                                          ? const Color(0xFFE8EAF0)
+                                          : const Color(0xFF1A1A2E))),
+                            ]),
+                      ],
+                      if (_targetBand != null && _daysUntilExam != null)
+                        const SizedBox(width: 16),
+                      if (_daysUntilExam != null) ...[
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: _daysUntilExam! <= 7
+                                ? const Color(0xFFC62828).withOpacity(0.1)
+                                : const Color(0xFF2E7D32).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Icon(Icons.calendar_today_rounded,
+                              color: _daysUntilExam! <= 7
+                                  ? const Color(0xFFC62828)
+                                  : const Color(0xFF2E7D32),
+                              size: 20),
+                        ),
+                        const SizedBox(width: 10),
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Exam in',
+                                  style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w600,
+                                      color: isDark
+                                          ? const Color(0xFF557799)
+                                          : const Color(0xFF888899))),
+                              Text(
+                                  _daysUntilExam! > 0
+                                      ? '$_daysUntilExam days'
+                                      : _daysUntilExam == 0
+                                          ? 'Today!'
+                                          : 'Passed',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: _daysUntilExam! <= 7
+                                          ? const Color(0xFFC62828)
+                                          : isDark
+                                              ? const Color(0xFFE8EAF0)
+                                              : const Color(0xFF1A1A2E))),
+                            ]),
+                      ],
+                    ])
+                  : Row(children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF1565C0).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(Icons.flag_rounded,
+                            color: Color(0xFF1565C0), size: 20),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text('Set your target band & exam date',
+                            style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                color: isDark
+                                    ? const Color(0xFF8899AA)
+                                    : const Color(0xFF555577))),
+                      ),
+                      Icon(Icons.chevron_right_rounded,
+                          color: isDark
+                              ? const Color(0xFF557799)
+                              : const Color(0xFFAAAAAA)),
+                    ]),
+            ),
+          ),
+        ),
+      ]),
+    );
+  }
+
+  void _showGoalDialog() {
+    double selectedBand = _targetBand ?? 7.0;
+    DateTime? selectedDate;
+    final examDateStr = PrefsRepository.getExamDate();
+    if (examDateStr != null) {
+      try {
+        selectedDate = DateTime.parse(examDateStr);
+      } catch (_) {}
+    }
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(builder: (ctx, setDialogState) {
+        return AlertDialog(
+          title: const Text('Set Your Goal'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Target Band Score',
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+              const SizedBox(height: 8),
+              Row(children: [
+                Expanded(
+                  child: Slider(
+                    value: selectedBand,
+                    min: 5.0,
+                    max: 9.0,
+                    divisions: 8,
+                    label: selectedBand.toStringAsFixed(1),
+                    onChanged: (v) => setDialogState(() => selectedBand = v),
+                  ),
+                ),
+                Text(selectedBand.toStringAsFixed(1),
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold)),
+              ]),
+              const SizedBox(height: 20),
+              const Text('Exam Date (optional)',
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+              const SizedBox(height: 8),
+              GestureDetector(
+                onTap: () async {
+                  final picked = await showDatePicker(
+                    context: ctx,
+                    initialDate: selectedDate ??
+                        DateTime.now().add(const Duration(days: 30)),
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime.now().add(const Duration(days: 365)),
+                  );
+                  if (picked != null) {
+                    setDialogState(() => selectedDate = picked);
+                  }
+                },
+                child: Container(
+                  width: double.infinity,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    selectedDate != null
+                        ? '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}'
+                        : 'Tap to select date',
+                    style: TextStyle(
+                        fontSize: 14,
+                        color: selectedDate != null ? null : Colors.grey),
+                  ),
+                ),
+              ),
+              if (selectedDate != null)
+                TextButton(
+                  onPressed: () => setDialogState(() => selectedDate = null),
+                  child: const Text('Clear exam date',
+                      style: TextStyle(fontSize: 12)),
+                ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () async {
+                await PrefsRepository.setTargetBand(selectedBand);
+                if (selectedDate != null) {
+                  final ds =
+                      '${selectedDate!.year}-${selectedDate!.month.toString().padLeft(2, '0')}-${selectedDate!.day.toString().padLeft(2, '0')}';
+                  await PrefsRepository.setExamDate(ds);
+                } else {
+                  await PrefsRepository.clearExamDate();
+                }
+                if (mounted) {
+                  setState(() {
+                    _targetBand = selectedBand;
+                    _daysUntilExam = PrefsRepository.getDaysUntilExam();
+                  });
+                }
+                if (ctx.mounted) Navigator.pop(ctx);
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      }),
+    );
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // WEAK AREA ANALYSIS CARD
+  // ─────────────────────────────────────────────────────────────────────────
+
+  Widget _buildWeakAreaCard(bool isDark) {
+    if (_weakestArea == null) return const SizedBox.shrink();
+
+    final color = switch (_weakestArea) {
+      'Fluency' => const Color(0xFF6A1B9A),
+      'Lexical Resource' => const Color(0xFF00695C),
+      'Grammar' => const Color(0xFFE65100),
+      'Pronunciation' => const Color(0xFF0277BD),
+      _ => const Color(0xFF1565C0),
+    };
+
+    final icon = switch (_weakestArea) {
+      'Fluency' => Icons.speed_rounded,
+      'Lexical Resource' => Icons.spellcheck_rounded,
+      'Grammar' => Icons.edit_note_rounded,
+      'Pronunciation' => Icons.record_voice_over_rounded,
+      _ => Icons.analytics_rounded,
+    };
+
+    final tip = switch (_weakestArea) {
+      'Fluency' => 'Try speaking non-stop for 1 minute on any topic daily.',
+      'Lexical Resource' =>
+        'Learn 3 new topic-specific words every day and use them.',
+      'Grammar' => 'Practice using past perfect and conditionals in answers.',
+      'Pronunciation' =>
+        'Record yourself and compare with native speaker audio.',
+      _ => 'Keep practicing to improve this area.',
+    };
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+      child: Container(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1A2E4A) : Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: color.withOpacity(0.2)),
+          boxShadow: isDark
+              ? []
+              : [
+                  BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 3))
+                ],
+        ),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+                color: color.withOpacity(0.12),
+                borderRadius: BorderRadius.circular(12)),
+            child: Icon(icon, color: color, size: 22),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(children: [
+                Text('Focus Area',
+                    style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: color,
+                        letterSpacing: 0.5)),
+                const Spacer(),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text('Avg ${_weakestScore!.toStringAsFixed(1)}',
+                      style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: color)),
+                ),
+              ]),
+              const SizedBox(height: 4),
+              Text('$_weakestArea needs work',
+                  style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: isDark
+                          ? const Color(0xFFE8EAF0)
+                          : const Color(0xFF1A1A2E))),
+              const SizedBox(height: 6),
+              Text(tip,
+                  style: TextStyle(
+                      fontSize: 12.5,
+                      height: 1.5,
+                      color: isDark
+                          ? const Color(0xFFCDD5E0)
+                          : const Color(0xFF555577))),
+            ]),
+          ),
+        ]),
       ),
     );
   }
