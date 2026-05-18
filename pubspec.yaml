@@ -1,7 +1,7 @@
 name: ielts_speaking_2026
 description: "IELTS Speaking 2026 — 200+ cue cards, Band 7-8 answers, offline practice."
 publish_to: 'none'
-version: 1.0.0+12
+version: 1.0.0+14
 
 environment:
   sdk: '>=3.3.3 <4.0.0'
